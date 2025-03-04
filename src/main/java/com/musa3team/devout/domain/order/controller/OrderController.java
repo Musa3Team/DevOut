@@ -1,15 +1,13 @@
 package com.musa3team.devout.domain.order.controller;
 
+import com.musa3team.devout.domain.order.dto.request.ChangeStatusRequest;
 import com.musa3team.devout.domain.order.dto.request.CreateOrderRequest;
 import com.musa3team.devout.domain.order.dto.response.OrderResponse;
 import com.musa3team.devout.domain.order.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/orders")
@@ -22,5 +20,10 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody CreateOrderRequest request){
         return ResponseEntity.ok(orderService.createOrder(request));
+    }
+
+    @PatchMapping("/{id}")
+    public void changeStatus(@PathVariable Long id, @Valid @RequestBody ChangeStatusRequest requset){
+        orderService.changeOrderStatus(id, requset.getOrderStatus());
     }
 }
