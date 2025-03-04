@@ -1,11 +1,9 @@
 package com.musa3team.devout.domain.order.dto.response;
 
+import com.musa3team.devout.domain.order.entity.OrderItem;
+import com.musa3team.devout.domain.order.entity.Orders;
 import com.musa3team.devout.domain.order.enums.OrderStatus;
-import com.musa3team.devout.domain.order.service.OrderService;
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 public class OrderResponse {
@@ -23,5 +21,16 @@ public class OrderResponse {
         this.totalPrice = totalPrice;
         this.status = status;
         this.orderItem = orderItem;
+    }
+
+    public static OrderResponse toDto(Orders order, OrderItem orderItem, int totalPrice){
+        return new OrderResponse(
+                order.getId(),
+                order.getStoreId(),
+                orderItem.getCount(),
+                totalPrice,
+                order.getStatus(),
+                new OrderItemResponse(orderItem.getMenuName(), orderItem.getCount(), orderItem.getPrice())
+        );
     }
 }
