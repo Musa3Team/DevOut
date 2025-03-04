@@ -1,5 +1,6 @@
 package com.musa3team.devout.domain.store.controller;
 
+import com.musa3team.devout.domain.store.dto.FindByIdResponseDto;
 import com.musa3team.devout.domain.store.dto.StoreRequestDto;
 import com.musa3team.devout.domain.store.dto.StoreResponseDto;
 import com.musa3team.devout.domain.store.dto.StoreUpdateRequestDto;
@@ -53,5 +54,11 @@ public class StoreController {
         );
 
         return new ResponseEntity<>(update, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<FindByIdResponseDto> findById(@PathVariable Long id) {
+        FindByIdResponseDto findStore = storeService.findById(id);
+        return new ResponseEntity<>(findStore, HttpStatus.OK);
     }
 }

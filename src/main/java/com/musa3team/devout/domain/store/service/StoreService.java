@@ -2,6 +2,10 @@ package com.musa3team.devout.domain.store.service;
 
 import com.musa3team.devout.common.constants.StoreStatus;
 import com.musa3team.devout.common.constants.StoreCategory;
+import com.musa3team.devout.domain.menu.dto.MenuResponseDto;
+import com.musa3team.devout.domain.menu.entity.Menu;
+import com.musa3team.devout.domain.menu.repository.MenuRepository;
+import com.musa3team.devout.domain.store.dto.FindByIdResponseDto;
 import com.musa3team.devout.domain.store.dto.StoreResponseDto;
 import com.musa3team.devout.domain.store.entity.Store;
 import com.musa3team.devout.domain.store.repository.StoreRepository;
@@ -25,6 +29,7 @@ import static com.musa3team.devout.domain.store.valid.TenMinuteIntervalValidator
 public class StoreService {
 
     private final StoreRepository storeRepository;
+    private final MenuRepository menuRepository;
 
     @Transactional
     public StoreResponseDto save(String address, StoreCategory category, String name, String contents, Long minimumPrice, String telephoneNumber, LocalTime openTime, LocalTime closeTime) {
@@ -160,6 +165,35 @@ public class StoreService {
                 store.getMinimumPrice(),
                 store.getCategory(),
                 store.getStatus()
+        );
+    }
+
+    public FindByIdResponseDto findById(Long id) {
+        Store store = storeRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "가게가 존재하지 않거나 잘못입력했습니다.")
+        );
+
+        List<Menu> menus = menuRepository.findAllByStoreId(id);
+
+        return new FindByIdResponseDto(
+                store.getId(),
+                store.getTelephoneNumber(),
+                store.getAddress(),
+                store.getContents(),
+                store.getName(),
+                store.getOpenTime(),
+                store.getCloseTime(),
+                store.getMinimumPrice(),
+                store.getCategory(),
+                store.getStatus(),
+                menus.stream().map(
+                        menu -> new MenuResponseDto(
+                            menu.getId(),
+                            menu.getName(),
+                            menu.getContents(),
+                            menu.getPrice()
+                        )
+                ).toList()
         );
     }
 }
