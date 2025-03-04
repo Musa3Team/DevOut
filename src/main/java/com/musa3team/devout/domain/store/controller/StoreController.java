@@ -1,8 +1,8 @@
 package com.musa3team.devout.domain.store.controller;
 
-import com.musa3team.devout.domain.store.dto.PrepareResponseDto;
 import com.musa3team.devout.domain.store.dto.StoreRequestDto;
 import com.musa3team.devout.domain.store.dto.StoreResponseDto;
+import com.musa3team.devout.domain.store.dto.StoreUpdateRequestDto;
 import com.musa3team.devout.domain.store.service.StoreService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,9 +32,26 @@ public class StoreController {
         return new ResponseEntity<>(store, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<PrepareResponseDto> SetStatusToPrepare(@PathVariable Long id) {
-        PrepareResponseDto prepare = storeService.prepare(id);
+    @PatchMapping("/status/{id}")
+    public ResponseEntity<StoreResponseDto> SetStatusToPrepareOrUnprepared(@PathVariable Long id) {
+        StoreResponseDto prepare = storeService.prepare(id);
         return new ResponseEntity<>(prepare, HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<StoreResponseDto> update(@PathVariable Long id, @RequestBody @Valid StoreUpdateRequestDto requestDto) {
+        StoreResponseDto update = storeService.update(
+                id,
+                requestDto.getAddress(),
+                requestDto.getCategory(),
+                requestDto.getName(),
+                requestDto.getContents(),
+                requestDto.getMinimum_price(),
+                requestDto.getTelephone_number(),
+                requestDto.getOpen_time(),
+                requestDto.getClose_time()
+        );
+
+        return new ResponseEntity<>(update, HttpStatus.OK);
     }
 }

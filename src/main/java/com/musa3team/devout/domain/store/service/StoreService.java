@@ -2,7 +2,6 @@ package com.musa3team.devout.domain.store.service;
 
 import com.musa3team.devout.common.constants.StoreStatus;
 import com.musa3team.devout.common.constants.StoreCategory;
-import com.musa3team.devout.domain.store.dto.PrepareResponseDto;
 import com.musa3team.devout.domain.store.dto.StoreResponseDto;
 import com.musa3team.devout.domain.store.entity.Store;
 import com.musa3team.devout.domain.store.repository.StoreRepository;
@@ -16,6 +15,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.regex.Pattern;
+
+import static com.musa3team.devout.domain.store.valid.TenMinuteIntervalValidator.isValidTenMinuteInterval;
 
 @Slf4j
 @Service
@@ -49,7 +51,8 @@ public class StoreService {
                 savedStore.getOpenTime(),
                 savedStore.getCloseTime(),
                 savedStore.getMinimumPrice(),
-                savedStore.getCategory()
+                savedStore.getCategory(),
+                store.getStatus()
         );
     }
 
@@ -66,16 +69,31 @@ public class StoreService {
     }
 
     @Transactional
-    public PrepareResponseDto prepare(Long id) {
+    public StoreResponseDto prepare(Long id) {
         Store store = storeRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "요청하는 가게가 없거나 잘못 요청하셨습니다.")
         );
 
-        store.setStatus(StoreStatus.CLOSE);
+        if(store.getStatus().equals(StoreStatus.UNPREPARED)) store.setStatus(StoreStatus.CLOSE);
+        else{
+            store.setStatus(StoreStatus.UNPREPARED);
+            return new StoreResponseDto(
+                    store.getId(),
+                    store.getTelephoneNumber(),
+                    store.getAddress(),
+                    store.getContents(),
+                    store.getName(),
+                    store.getOpenTime(),
+                    store.getCloseTime(),
+                    store.getMinimumPrice(),
+                    store.getCategory(),
+                    store.getStatus()
+            );
+        }
         LocalTime now = LocalTime.now();
         updateStatusByTime(store, now);
 
-        return new PrepareResponseDto(
+        return new StoreResponseDto(
                 store.getId(),
                 store.getTelephoneNumber(),
                 store.getAddress(),
@@ -105,5 +123,43 @@ public class StoreService {
                 store.setStatus(StoreStatus.CLOSE);
             }
         }
+    }
+
+    @Transactional
+    public StoreResponseDto update(Long id, String address, StoreCategory category, String name, String contents, Long minimumPrice, String telephoneNumber, LocalTime openTime, LocalTime closeTime) {
+        Store store = storeRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "잘못 입력했거나 존재하지 않습니다.")
+        );
+
+        if (telephoneNumber != null && !address.isBlank()) store.setAddress(address);
+        if (category != null) store.setCategory(category);
+        if (name != null && !name.isBlank()) store.setName(name);
+        if (contents != null && contents.isBlank()) store.setContents(contents);
+        if (minimumPrice != null) store.setMinimumPrice(minimumPrice);
+        if (telephoneNumber != null && !telephoneNumber.isBlank()){
+            if(Pattern.matches("^(02|0[3-6][1-5])-?\\d{3,4}-?\\d{4}$", telephoneNumber)) store.setTelephoneNumber(telephoneNumber);
+            else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "전화번호 형식을 확인하세요");
+        }
+        if (openTime != null){
+            if(isValidTenMinuteInterval(openTime)) store.setOpenTime(openTime);
+            else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "분은 10분 단위만 입력 가능합니다.");
+        }
+        if (closeTime != null){
+            if(isValidTenMinuteInterval(closeTime)) store.setCloseTime(closeTime);
+            else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "분은 10분 단위만 입력 가능합니다.");
+        }
+
+        return new StoreResponseDto(
+                store.getId(),
+                store.getTelephoneNumber(),
+                store.getAddress(),
+                store.getContents(),
+                store.getName(),
+                store.getOpenTime(),
+                store.getCloseTime(),
+                store.getMinimumPrice(),
+                store.getCategory(),
+                store.getStatus()
+        );
     }
 }

@@ -13,6 +13,7 @@ import java.time.LocalTime;
 @Entity
 @Getter
 @NoArgsConstructor
+@Setter
 public class Store extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +31,6 @@ public class Store extends BaseEntity {
 
     private LocalTime closeTime;
 
-    @Setter
     @Enumerated(EnumType.STRING)
     private StoreStatus status;
 

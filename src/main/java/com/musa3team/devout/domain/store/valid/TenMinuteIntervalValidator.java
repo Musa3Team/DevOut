@@ -14,7 +14,11 @@ public class TenMinuteIntervalValidator implements ConstraintValidator<ValidTenM
 
     @Override
     public boolean isValid(LocalTime localTime, ConstraintValidatorContext context) {
-        int minute = localTime.getMinute();
+        return isValidTenMinuteInterval(localTime);
+    }
+
+    public static boolean isValidTenMinuteInterval(LocalTime time) {
+        int minute = time.getMinute();
         return minute % 10 == 0;
     }
 }
