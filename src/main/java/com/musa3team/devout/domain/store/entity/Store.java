@@ -1,11 +1,12 @@
 package com.musa3team.devout.domain.store.entity;
 
 import com.musa3team.devout.common.entity.BaseEntity;
-import com.musa3team.devout.common.status.StoreStatus;
-import com.musa3team.devout.domain.store.category.Category;
+import com.musa3team.devout.common.constants.StoreStatus;
+import com.musa3team.devout.common.constants.StoreCategory;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalTime;
 
@@ -29,15 +30,16 @@ public class Store extends BaseEntity {
 
     private LocalTime closeTime;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     private StoreStatus status;
 
     private Long minimumPrice;
 
     @Enumerated(EnumType.STRING)
-    private Category category;
+    private StoreCategory category;
 
-    public Store(String telephoneNumber, String address, String contents, String name, LocalTime openTime, LocalTime closeTime, Long minimumPrice, Category category) {
+    public Store(String telephoneNumber, String address, String contents, String name, LocalTime openTime, LocalTime closeTime, Long minimumPrice, StoreCategory category) {
         this.telephoneNumber = telephoneNumber;
         this.address = address;
         this.contents = contents;

@@ -1,6 +1,7 @@
 package com.musa3team.devout.domain.store.dto;
 
-import com.musa3team.devout.domain.store.category.Category;
+import com.musa3team.devout.common.constants.StoreCategory;
+import com.musa3team.devout.domain.store.valid.ValidTenMinuteInterval;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -13,8 +14,10 @@ public class StoreRequestDto {
     private String address;
     private String contents;
     private String name;
+    @ValidTenMinuteInterval
     private LocalTime open_time;
+    @ValidTenMinuteInterval
     private LocalTime close_time;
     private Long minimum_price;
-    private Category category;
+    private StoreCategory category;
 }
