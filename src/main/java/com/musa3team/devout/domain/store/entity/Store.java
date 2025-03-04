@@ -1,26 +1,50 @@
 package com.musa3team.devout.domain.store.entity;
 
 import com.musa3team.devout.common.entity.BaseEntity;
+import com.musa3team.devout.common.status.StoreStatus;
+import com.musa3team.devout.domain.store.category.Category;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import java.sql.Time;
+import java.time.LocalTime;
 
-@Getter
 @Entity
-@Table(name = "store")
+@Getter
+@NoArgsConstructor
 public class Store extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private int ownerId;
+
     private String telephoneNumber;
+
     private String address;
+
     private String contents;
+
     private String name;
-    private Time openTime;
-    private Time closeTime;
-    private String status;
-    private int minimumPrice;
-    private String category;
+
+    private LocalTime openTime;
+
+    private LocalTime closeTime;
+
+    @Enumerated(EnumType.STRING)
+    private StoreStatus status;
+
+    private Long minimumPrice;
+
+    @Enumerated(EnumType.STRING)
+    private Category category;
+
+    public Store(String telephoneNumber, String address, String contents, String name, LocalTime openTime, LocalTime closeTime, Long minimumPrice, Category category) {
+        this.telephoneNumber = telephoneNumber;
+        this.address = address;
+        this.contents = contents;
+        this.name = name;
+        this.openTime = openTime;
+        this.closeTime = closeTime;
+        this.minimumPrice = minimumPrice;
+        this.category = category;
+    }
 }
