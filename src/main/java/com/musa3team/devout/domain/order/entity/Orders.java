@@ -18,16 +18,23 @@ public class Orders extends BaseEntity {
     private Long storeId;
 
     @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    private OrderStatus status = OrderStatus.PENDING;
 
     @ManyToOne
     @JoinColumn(name = "buy_member_id")
     private Member member;
 
-    public Orders(Long storeId, OrderStatus status, Member member) {
+    public Orders(Long storeId, Member member) {
         this.storeId = storeId;
-        this.status = status;
         this.member = member;
     }
 
+    public void saveOrder(Long storeId, Member member){
+        this.storeId = storeId;
+        this.member = member;
+    }
+
+    public void updateStatus(OrderStatus status) {
+        this.status = status;
+    }
 }
