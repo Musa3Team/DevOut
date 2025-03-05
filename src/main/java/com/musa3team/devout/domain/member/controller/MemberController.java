@@ -29,28 +29,26 @@ public class MemberController {
 
         String authorizationHeader = request.getHeader("Authorization");
 
+        //헤더가 비어있거나 Bearer 로 시작하지 않는 경우 에러
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             log.info("Authorization 헤더가 없거나 잘못된 형식입니다.");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
+        // Bearer를 제외하고 실제 토큰만 추출하는 로직
         String token = jwtUtil.substringToken(authorizationHeader);
         log.info("*** token: {}", token);
 
-        try {
-            // 토큰에서의 id와 일치하는지 확인하는 로직
-            Long tokenMemberId = jwtUtil.extractMemberId(token);
-            log.info("*** 현재 로그인된 사용자 id = {}", tokenMemberId);
+        // 토큰에서의 id와 일치하는지 확인하는 로직
+        Long tokenMemberId = jwtUtil.extractMemberId(token); //토큰에서 memberId 추출
+        log.info("*** 현재 로그인된 사용자 id = {}", tokenMemberId);
 
-            if(!tokenMemberId.equals(id)) {
-                log.info("권한 없음 : 요청id와 토큰 id 불일치");
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            }
-            MemberResponse memberResponse = memberService.modifyInfo(id, updateInfoRequest);
-            return new ResponseEntity<>(memberResponse, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if(!tokenMemberId.equals(id)) {
+            log.info("권한 없음 : 요청id와 토큰 id 불일치");
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+        MemberResponse memberResponse = memberService.modifyInfo(id, updateInfoRequest);
+        return new ResponseEntity<>(memberResponse, HttpStatus.OK);
 
 
     }
