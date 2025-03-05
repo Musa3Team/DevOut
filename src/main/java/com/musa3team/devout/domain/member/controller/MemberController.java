@@ -27,16 +27,8 @@ public class MemberController {
             @RequestBody ModifyInfoRequest modifyInfoRequest,
             HttpServletRequest request) {
 
-        String authorizationHeader = request.getHeader("Authorization");
+        String token = jwtUtil.extractToken(request);
 
-        //헤더가 비어있거나 Bearer 로 시작하지 않는 경우 에러
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            log.info("Authorization 헤더가 없거나 잘못된 형식입니다.");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-
-        // Bearer를 제외하고 실제 토큰만 추출하는 로직
-        String token = jwtUtil.substringToken(authorizationHeader);
         log.info("*** token: {}", token);
 
         memberService.isEqualsId(id, token); // 토큰에서의 id와 일치하는지 확인하는 로직
@@ -53,17 +45,7 @@ public class MemberController {
             @RequestBody ModifyPasswordRequest passwordRequest,
             HttpServletRequest request) {
 
-        String authorizationHeader = request.getHeader("Authorization");
-
-        //헤더가 비어있거나 Bearer 로 시작하지 않는 경우 에러
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            log.info("Authorization 헤더가 없거나 잘못된 형식입니다.");
-            return new ResponseEntity<>("헤더가 없거나 잘못된 형식", HttpStatus.UNAUTHORIZED);
-        }
-
-        // Bearer를 제외하고 실제 토큰만 추출하는 로직
-        String token = jwtUtil.substringToken(authorizationHeader);
-        log.info("*** token: {}", token);
+        String token = jwtUtil.extractToken(request);
 
         memberService.isEqualsId(id, token); // 토큰에서의 id와 일치하는지 확인하는 로직
 
@@ -78,17 +60,8 @@ public class MemberController {
             @PathVariable Long id,
             @RequestBody DeleteMemberRequest deleteMemberRequest,
             HttpServletRequest request) {
-        String authorizationHeader = request.getHeader("Authorization");
 
-        //헤더가 비어있거나 Bearer 로 시작하지 않는 경우 에러
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            log.info("Authorization 헤더가 없거나 잘못된 형식입니다.");
-            return new ResponseEntity<>("헤더가 없거나 잘못된 형식", HttpStatus.UNAUTHORIZED);
-        }
-
-        // Bearer를 제외하고 실제 토큰만 추출하는 로직
-        String token = jwtUtil.substringToken(authorizationHeader);
-        log.info("*** token: {}", token);
+        String token = jwtUtil.extractToken(request);
 
         memberService.isEqualsId(id, token);
 
