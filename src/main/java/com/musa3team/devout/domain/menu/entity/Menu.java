@@ -41,18 +41,11 @@ public class Menu extends BaseEntity{
         this.category = category;
     }
 
-    public Menu(String name, int price, String contents, MenuCategory category) {
-        this.name = name;
-        this.price = price;
-        this.contents = contents;
-        this.category = category;
-    }
-
     public void disable() {
         this.status = MenuStatus.DISABLED;
     }
 
-    public void update(@NotBlank(message = "메뉴 이름은 필수 입력 값입니다.") String name, @Min(value = 0, message = "가격은 0원 이상이어야 합니다.") int price, @NotBlank(message = "메뉴 설명은 필수 입력 값입니다.") String contents, @NotNull(message = "카테고리는 필수 입력 값입니다.") MenuCategory category) {
+    public void update(String name, int price, String contents, MenuCategory category) {
         this.name = name;
         this.price = price;
         this.contents = contents;
