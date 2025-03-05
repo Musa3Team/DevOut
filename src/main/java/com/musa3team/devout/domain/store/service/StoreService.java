@@ -1,7 +1,10 @@
 package com.musa3team.devout.domain.store.service;
 
+import com.musa3team.devout.common.config.PasswordEncoder;
 import com.musa3team.devout.common.constants.StoreStatus;
 import com.musa3team.devout.common.constants.StoreCategory;
+import com.musa3team.devout.domain.member.entity.Member;
+import com.musa3team.devout.domain.member.repository.MemberRepository;
 import com.musa3team.devout.domain.menu.dto.MenuResponseDto;
 import com.musa3team.devout.domain.menu.entity.Menu;
 import com.musa3team.devout.domain.menu.repository.MenuRepository;
@@ -32,9 +35,23 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final MenuRepository menuRepository;
+    private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public StoreResponseDto save(String address, StoreCategory category, String name, String contents, Long minimumPrice, String telephoneNumber, LocalTime openTime, LocalTime closeTime) {
+    public StoreResponseDto save(Long memberId, String address, StoreCategory category, String name, String contents, Long minimumPrice, String telephoneNumber, LocalTime openTime, LocalTime closeTime) {
+        Member member = memberRepository.findByIdOrElseThrow(memberId);
+
+        if (
+                member.getStores()
+                        .stream()
+                        .filter(
+                                store -> !store.getStatus().equals(StoreStatus.SHUTDOWN)
+                        ).count() >= 3
+        ) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "가게는 최대 3개까지만 영업가능합니다.");
+        }
+
         Store store = new Store(
                 telephoneNumber,
                 address,
@@ -43,7 +60,8 @@ public class StoreService {
                 openTime,
                 closeTime,
                 minimumPrice,
-                category
+                category,
+                member
         );
 
         store.setStatus(StoreStatus.UNPREPARED);
@@ -59,7 +77,7 @@ public class StoreService {
                 savedStore.getCloseTime(),
                 savedStore.getMinimumPrice(),
                 savedStore.getCategory(),
-                store.getStatus()
+                savedStore.getStatus()
         );
     }
 
@@ -249,10 +267,19 @@ public class StoreService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id, Long memberId, String password) {
         Store store = storeRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않거나 잘못 입력했습니다.")
         );
+
+        if(store.getStatus().equals(StoreStatus.SHUTDOWN))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 폐업한 가게입니다");
+
+        Member member = memberRepository.findByIdOrElseThrow(memberId);
+        if(!passwordEncoder.matches(password, member.getPassword()))
+
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 틀렸어요");
+        
         store.setStatus(StoreStatus.SHUTDOWN);
     }
 }

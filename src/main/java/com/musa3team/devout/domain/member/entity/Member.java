@@ -1,24 +1,72 @@
 package com.musa3team.devout.domain.member.entity;
 
 import com.musa3team.devout.common.entity.BaseEntity;
+import com.musa3team.devout.domain.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
-@Table(name = "member")
+@Table(
+        name = "member",
+        uniqueConstraints = {@UniqueConstraint(name="UK_email_role", columnNames = {"email", "member_role"})}
+)
+@NoArgsConstructor
 public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id ;
+    private Long id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
     private String phoneNumber;
+
     private String address;
-    private String memberRole;
+
+    @Enumerated(EnumType.STRING)
+    private MemberRole memberRole;
+
+    @Column(nullable = true)
     private LocalDateTime deletedAt;
+
+    @OneToMany(mappedBy = "member")
+    private List<Store> stores = new ArrayList<>();
+
+
+    public Member(String name, String email, String password, String address, String phoneNumber, String memberRole) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.memberRole = MemberRole.valueOf(memberRole);
+
+    }
+
+    public void modifyName(String name) {
+        this.name = name;
+    }
+
+    public void modifyAddress(String address) {
+        this.address = address;
+    }
+
+    public void modifyPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
 }

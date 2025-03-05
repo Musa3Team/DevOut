@@ -2,6 +2,7 @@ package com.musa3team.devout.domain.store.dto;
 
 import com.musa3team.devout.common.constants.StoreCategory;
 import com.musa3team.devout.common.constants.StoreStatus;
+import com.musa3team.devout.domain.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
