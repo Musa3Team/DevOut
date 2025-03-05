@@ -1,9 +1,7 @@
 package com.musa3team.devout.domain.store.controller;
 
-import com.musa3team.devout.domain.store.dto.FindByIdResponseDto;
-import com.musa3team.devout.domain.store.dto.StoreRequestDto;
-import com.musa3team.devout.domain.store.dto.StoreResponseDto;
-import com.musa3team.devout.domain.store.dto.StoreUpdateRequestDto;
+import com.musa3team.devout.common.constants.StoreCategory;
+import com.musa3team.devout.domain.store.dto.*;
 import com.musa3team.devout.domain.store.service.StoreService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -60,5 +58,16 @@ public class StoreController {
     public ResponseEntity<FindByIdResponseDto> findById(@PathVariable Long id) {
         FindByIdResponseDto findStore = storeService.findById(id);
         return new ResponseEntity<>(findStore, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<StorePageResponseDto> findByAllPage(
+            @RequestParam (defaultValue = "1") int page,
+            @RequestParam (defaultValue = "10") int pageSize,
+            @RequestParam String name,
+            @RequestParam StoreCategory category
+    ) {
+        StorePageResponseDto stores = storeService.findAll(page, pageSize, name, category);
+        return new ResponseEntity<>(stores, HttpStatus.OK);
     }
 }

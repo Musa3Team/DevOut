@@ -6,11 +6,16 @@ import com.musa3team.devout.domain.menu.dto.MenuResponseDto;
 import com.musa3team.devout.domain.menu.entity.Menu;
 import com.musa3team.devout.domain.menu.repository.MenuRepository;
 import com.musa3team.devout.domain.store.dto.FindByIdResponseDto;
+import com.musa3team.devout.domain.store.dto.StorePageResponseDto;
 import com.musa3team.devout.domain.store.dto.StoreResponseDto;
 import com.musa3team.devout.domain.store.entity.Store;
 import com.musa3team.devout.domain.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -42,7 +47,7 @@ public class StoreService {
                 closeTime,
                 minimumPrice,
                 category
-                );
+        );
 
         store.setStatus(StoreStatus.UNPREPARED);
         Store savedStore = storeRepository.save(store);
@@ -68,7 +73,8 @@ public class StoreService {
         List<Store> stores = storeRepository.findAll();
 
         for (Store store : stores) {
-            if(store.getStatus().equals(StoreStatus.UNPREPARED) || store.getStatus().equals(StoreStatus.SHUTDOWN)) continue;  //폐업이랑 미준비 가게는 제외
+            if (store.getStatus().equals(StoreStatus.UNPREPARED) || store.getStatus().equals(StoreStatus.SHUTDOWN))
+                continue;  //폐업이랑 미준비 가게는 제외
             updateStatusByTime(store, now);
         }
     }
@@ -79,8 +85,8 @@ public class StoreService {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "요청하는 가게가 없거나 잘못 요청하셨습니다.")
         );
 
-        if(store.getStatus().equals(StoreStatus.UNPREPARED)) store.setStatus(StoreStatus.CLOSE);
-        else{
+        if (store.getStatus().equals(StoreStatus.UNPREPARED)) store.setStatus(StoreStatus.CLOSE);
+        else {
             store.setStatus(StoreStatus.UNPREPARED);
             return new StoreResponseDto(
                     store.getId(),
@@ -141,16 +147,17 @@ public class StoreService {
         if (name != null && !name.isBlank()) store.setName(name);
         if (contents != null && contents.isBlank()) store.setContents(contents);
         if (minimumPrice != null) store.setMinimumPrice(minimumPrice);
-        if (telephoneNumber != null && !telephoneNumber.isBlank()){
-            if(Pattern.matches("^(02|0[3-6][1-5])-?\\d{3,4}-?\\d{4}$", telephoneNumber)) store.setTelephoneNumber(telephoneNumber);
+        if (telephoneNumber != null && !telephoneNumber.isBlank()) {
+            if (Pattern.matches("^(02|0[3-6][1-5])-?\\d{3,4}-?\\d{4}$", telephoneNumber))
+                store.setTelephoneNumber(telephoneNumber);
             else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "전화번호 형식을 확인하세요");
         }
-        if (openTime != null){
-            if(isValidTenMinuteInterval(openTime)) store.setOpenTime(openTime);
+        if (openTime != null) {
+            if (isValidTenMinuteInterval(openTime)) store.setOpenTime(openTime);
             else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "분은 10분 단위만 입력 가능합니다.");
         }
-        if (closeTime != null){
-            if(isValidTenMinuteInterval(closeTime)) store.setCloseTime(closeTime);
+        if (closeTime != null) {
+            if (isValidTenMinuteInterval(closeTime)) store.setCloseTime(closeTime);
             else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "분은 10분 단위만 입력 가능합니다.");
         }
 
@@ -188,12 +195,38 @@ public class StoreService {
                 store.getStatus(),
                 menus.stream().map(
                         menu -> new MenuResponseDto(
-                            menu.getId(),
-                            menu.getName(),
-                            menu.getContents(),
-                            menu.getPrice()
+                                menu.getId(),
+                                menu.getName(),
+                                menu.getContents(),
+                                menu.getPrice()
                         )
                 ).toList()
         );
+    }
+
+    public StorePageResponseDto findAll(int page, int pageSize, String name, StoreCategory category) {
+        int pageNum = (page > 0) ? page - 1 : 0;
+        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.ASC, "minimumPrice"));
+        Page<Store> storePage = storeRepository.findAllByNameAndCategory(name, category, pageable);
+        int currentPage = storePage.getNumber() + 1;
+        int totalPages = storePage.getTotalPages();
+        long totalElements = storePage.getTotalElements();
+
+        List<StoreResponseDto> stores = storePage.stream().map(
+                store -> new StoreResponseDto(
+                        store.getId(),
+                        store.getTelephoneNumber(),
+                        store.getAddress(),
+                        store.getContents(),
+                        store.getName(),
+                        store.getOpenTime(),
+                        store.getCloseTime(),
+                        store.getMinimumPrice(),
+                        store.getCategory(),
+                        store.getStatus()
+                )
+        ).toList();
+
+        return new StorePageResponseDto(stores, currentPage, totalPages, totalElements);
     }
 }
