@@ -50,4 +50,16 @@ public class Member extends BaseEntity {
 
     }
 
+    public void modifyName(String name) {
+        this.name = name;
+    }
+
+    public void modifyAddress(String address) {
+        this.address = address;
+    }
+
+    public void modifyPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
 }
