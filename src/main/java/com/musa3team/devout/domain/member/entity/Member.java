@@ -62,4 +62,12 @@ public class Member extends BaseEntity {
         this.phoneNumber = phoneNumber;
     }
 
+    public void modifyPassword(String password) {
+        this.password = password;
+    }
+
+    public void deleteMember(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
 }
