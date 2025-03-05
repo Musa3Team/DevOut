@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class ReviewController {
@@ -30,5 +32,16 @@ public class ReviewController {
         ReviewResponseDto reviewResponseDto = reviewService.save(memberId, orderId, requestDto);
 
         return ResponseEntity.ok(reviewResponseDto);
+    }
+
+    // 리뷰 조회
+    @GetMapping("/stores/{storeId}/reviews")
+    public ResponseEntity<List<ReviewResponseDto>> getReviewsByStore(
+            @PathVariable Long storeId,
+            @RequestParam(required = false) Integer minRating,
+            @RequestParam(required = false) Integer maxRating) {
+
+        List<ReviewResponseDto> reviews = reviewService.getReviewsByStore(storeId, minRating, maxRating);
+        return ResponseEntity.ok(reviews);
     }
 }
