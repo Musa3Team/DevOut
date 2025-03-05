@@ -22,7 +22,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static com.musa3team.devout.domain.store.valid.TenMinuteIntervalValidator.isValidTenMinuteInterval;
 
