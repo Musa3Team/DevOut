@@ -13,7 +13,9 @@ import com.musa3team.devout.domain.member.repository.TokenRepository;
 import com.sun.jdi.request.InvalidRequestStateException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -30,7 +32,15 @@ public class AuthService {
     @Transactional
     public SignupResponse signup(SignupRequest signupRequest) {
 
-        if(memberRepository.existsByEmailAndMemberRole(signupRequest.getEmail(), signupRequest.getMemberRole())){
+        Optional<Member> existingMember = memberRepository.findByEmailAndMemberRole(signupRequest.getEmail(), signupRequest.getMemberRole());
+
+        if(existingMember.isPresent()) {
+            Member member = existingMember.get();
+
+            if(member.getDeletedAt() != null){
+                throw new InvalidRequestStateException("탈퇴한 이메일은 재사용이 불가능합니다.");
+            }
+
             throw new InvalidRequestStateException("해당 이메일로 가입된 사용자가 이미 존재합니다.");
         }
 
@@ -59,6 +69,10 @@ public class AuthService {
         Member member = memberRepository.findByEmailAndMemberRole(loginRequest.getEmail(), loginRequest.getMemberRole()).orElseThrow(
                 () -> new IllegalArgumentException("해당 이메일로 가입된 사용자가 없습니다.")
         );
+
+        if(member.getDeletedAt() != null){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "탈퇴된 회원입니다.");
+        }
 
         if(!passwordEncoder.matches(loginRequest.getPassword(), member.getPassword())){
             throw new InvalidRequestStateException("비밀번호가 틀렸습니다.");
