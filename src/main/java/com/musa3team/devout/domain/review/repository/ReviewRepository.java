@@ -18,4 +18,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<ReviewCountDto> countByOrderIds(List<Long> orderIds);
 
     List<Review> findByOrderId(Long orderId);
+
+    List<Review> findByStoreIdAndRatingOrderByCreated(Long storeId, int minRating, int maxRating);
 }

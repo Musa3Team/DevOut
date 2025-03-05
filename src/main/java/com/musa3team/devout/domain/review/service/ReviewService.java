@@ -15,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
@@ -22,7 +25,6 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
-    private final StoreRepository storeRepository;
 
     @Transactional
     public ReviewResponseDto save(Long memberId, Long orderId, CreateReviewRequestDto requestDto) {
@@ -46,5 +48,20 @@ public class ReviewService {
         reviewRepository.save(review);
 
         return new ReviewResponseDto(review);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReviewResponseDto> getReviewsByStore(Long storeId, Integer minRating, Integer maxRating) {
+
+        if (minRating == null) {
+            minRating = 1;
+        }
+        if (maxRating == null) {
+            maxRating = 5;
+        }
+        List<Review> reviews = reviewRepository.findByStoreIdAndRatingOrderByCreated(storeId, minRating, maxRating);
+        return reviews.stream()
+                .map(ReviewResponseDto::new)
+                .collect(Collectors.toList());
     }
 }
