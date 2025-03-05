@@ -49,7 +49,7 @@ public class MemberService {
         validPassword(passwordRequest.getOldPassword(), member.getPassword()); // 입력한 비밀번호가 db에 저장되어있는 비밀번호랑 일치하는지 확인하는 로직
 
         // 새로운 비밀번호가 null이 아니고, 기존비밀번호와 일치하지 않을 때만 수정
-        if(passwordRequest.getNewPassword() != null && passwordRequest.getNewPassword() != passwordRequest.getOldPassword()) {
+        if(passwordRequest.getNewPassword() != null && passwordRequest.getNewPassword().equals(passwordRequest.getOldPassword())) {
             member.modifyPassword(passwordEncoder.encode(passwordRequest.getNewPassword()));
         }
     }

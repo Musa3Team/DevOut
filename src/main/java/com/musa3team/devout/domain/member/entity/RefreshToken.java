@@ -27,9 +27,8 @@ public class RefreshToken {
         this.email = email;
     }
 
-    public RefreshToken updateToken(String refreshToken){
+    public void updateToken(String refreshToken){
         this.refreshToken = refreshToken;
-        return this;
     }
 
 }

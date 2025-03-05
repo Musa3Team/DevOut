@@ -94,9 +94,18 @@ public class AuthService {
             return existingToken.get().getRefreshToken();
         }
 
-        // 리프레시 토큰이 없거나 만료된 경우 새로운 리프레시 토큰 생성
         String newRefreshToken = jwtUtil.createRefreshToken(member.getId(), member.getEmail(), member.getMemberRole());
-        tokenRepository.save(new RefreshToken(newRefreshToken, member.getEmail()));
+
+        if (existingToken.isPresent()) {
+            // 기존 토큰이 있으면 updateToken 메서드로 새로운 refreshToken 저장
+            RefreshToken refreshTokenEntity = existingToken.get();
+            refreshTokenEntity.updateToken(newRefreshToken);
+            tokenRepository.save(refreshTokenEntity);
+        } else {
+            // 기존 토큰이 없으면 새로 생성하여 저장
+            RefreshToken newTokenEntity = new RefreshToken(newRefreshToken, member.getEmail());
+            tokenRepository.save(newTokenEntity);
+        }
         return newRefreshToken;
     }
 }
