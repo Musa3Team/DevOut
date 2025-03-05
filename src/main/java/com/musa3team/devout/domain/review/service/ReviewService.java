@@ -6,6 +6,7 @@ import com.musa3team.devout.domain.order.enums.OrderStatus;
 import com.musa3team.devout.domain.order.repository.OrderItemRepository;
 import com.musa3team.devout.domain.order.repository.OrderRepository;
 import com.musa3team.devout.domain.review.dto.request.CreateReviewRequestDto;
+import com.musa3team.devout.domain.review.dto.request.UpdateReviewRequestDto;
 import com.musa3team.devout.domain.review.dto.response.ReviewResponseDto;
 import com.musa3team.devout.domain.review.entity.Review;
 import com.musa3team.devout.domain.order.entity.Orders;
@@ -59,9 +60,37 @@ public class ReviewService {
         if (maxRating == null) {
             maxRating = 5;
         }
-        List<Review> reviews = reviewRepository.findByStoreIdAndRatingOrderByCreated(storeId, minRating, maxRating);
+        List<Review> reviews = reviewRepository.findByStoreIdAndRatingOrderByCreatedAtDesc(storeId, minRating, maxRating);
         return reviews.stream()
                 .map(ReviewResponseDto::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public ReviewResponseDto updateReview(Long memberId, Long reviewId, UpdateReviewRequestDto updateDto) {
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
+
+        if (!review.getMember().getId().equals(memberId)) {
+            throw new IllegalArgumentException("리뷰 수정 권한이 없습니다.");
+        }
+
+        review.updateReview(updateDto.getContents(), updateDto.getRating());
+
+        return new ReviewResponseDto(review);
+    }
+
+    @Transactional
+    public void deleteReview(Long memberId, Long id) {
+
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
+
+        if (!review.getMember().getId().equals(memberId)) {
+            throw new IllegalArgumentException("리뷰 삭제 권한이 없습니다.");
+        }
+
+        reviewRepository.delete(review);
     }
 }

@@ -4,6 +4,7 @@ import com.musa3team.devout.domain.order.entity.Orders;
 import com.musa3team.devout.domain.order.enums.OrderStatus;
 import com.musa3team.devout.domain.order.service.OrderService;
 import com.musa3team.devout.domain.review.dto.request.CreateReviewRequestDto;
+import com.musa3team.devout.domain.review.dto.request.UpdateReviewRequestDto;
 import com.musa3team.devout.domain.review.dto.response.ReviewResponseDto;
 import com.musa3team.devout.domain.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,8 @@ public class ReviewController {
     public ResponseEntity<ReviewResponseDto> save(
             @SessionAttribute(name = "LOGIN_USER") Long memberId,
             @PathVariable Long orderId,
-            @RequestBody CreateReviewRequestDto requestDto) {
-
+            @RequestBody CreateReviewRequestDto requestDto
+    ) {
         Orders order = orderService.findByIdAndStatus(orderId, OrderStatus.DELIVERED)
                 .orElseThrow(() -> new IllegalArgumentException("배달 완료된 주문만 리뷰를 작성할 수 있습니다."));
 
@@ -39,9 +40,30 @@ public class ReviewController {
     public ResponseEntity<List<ReviewResponseDto>> getReviewsByStore(
             @PathVariable Long storeId,
             @RequestParam(required = false) Integer minRating,
-            @RequestParam(required = false) Integer maxRating) {
-
+            @RequestParam(required = false) Integer maxRating
+    ) {
         List<ReviewResponseDto> reviews = reviewService.getReviewsByStore(storeId, minRating, maxRating);
         return ResponseEntity.ok(reviews);
+    }
+
+    // 리뷰 수정
+    @PutMapping("/orders/{orderId}/reviews/{id}")
+    public ResponseEntity<ReviewResponseDto> updateReview(
+            @SessionAttribute(name = "LOGIN_USER") Long memberId,
+            @PathVariable Long id,
+            @RequestBody UpdateReviewRequestDto updateDto) {
+
+        ReviewResponseDto updatedReview = reviewService.updateReview(memberId, id, updateDto);
+        return ResponseEntity.ok(updatedReview);
+    }
+
+    // 리뷰 삭제
+    @DeleteMapping("/orders/{orderId}/reviews/{id}")
+    public ResponseEntity<Void> deleteReview(
+            @SessionAttribute(name = "LOGIN_USER") Long memberId,
+            @PathVariable Long id
+    ) {
+        reviewService.deleteReview(memberId, id);
+        return ResponseEntity.noContent().build();
     }
 }
