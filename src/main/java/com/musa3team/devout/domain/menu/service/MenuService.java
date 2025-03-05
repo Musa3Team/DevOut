@@ -47,4 +47,9 @@ public class MenuService {
         menu.disable();
         menuRepository.save(menu);
     }
+
+    public boolean isStoreOwner(Long memberId, Long storeId) {
+
+        return storeRepository.findByIdAndOwnerId(storeId, memberId).isPresent();
+    }
 }

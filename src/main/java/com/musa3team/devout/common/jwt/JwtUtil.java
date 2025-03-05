@@ -119,4 +119,8 @@ public class JwtUtil {
     }
 
 
+    public MemberRole extractMemberRole(String token){
+        Claims claims = extractClaims(token);
+        return MemberRole.valueOf(claims.get("memberRole", String.class));
+    }
 }
