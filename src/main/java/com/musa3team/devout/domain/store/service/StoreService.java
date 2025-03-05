@@ -12,10 +12,7 @@ import com.musa3team.devout.domain.store.entity.Store;
 import com.musa3team.devout.domain.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -25,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.musa3team.devout.domain.store.valid.TenMinuteIntervalValidator.isValidTenMinuteInterval;
 
@@ -85,6 +83,9 @@ public class StoreService {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "요청하는 가게가 없거나 잘못 요청하셨습니다.")
         );
 
+        if(store.getStatus().equals(StoreStatus.SHUTDOWN))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "폐업한 가게입니다.");
+
         if (store.getStatus().equals(StoreStatus.UNPREPARED)) store.setStatus(StoreStatus.CLOSE);
         else {
             store.setStatus(StoreStatus.UNPREPARED);
@@ -142,6 +143,9 @@ public class StoreService {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "잘못 입력했거나 존재하지 않습니다.")
         );
 
+        if(store.getStatus().equals(StoreStatus.SHUTDOWN))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "폐업한 가게입니다.");
+
         if (telephoneNumber != null && !address.isBlank()) store.setAddress(address);
         if (category != null) store.setCategory(category);
         if (name != null && !name.isBlank()) store.setName(name);
@@ -175,10 +179,14 @@ public class StoreService {
         );
     }
 
+    @Transactional(readOnly = true)
     public FindByIdResponseDto findById(Long id) {
         Store store = storeRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "가게가 존재하지 않거나 잘못입력했습니다.")
         );
+
+        if(store.getStatus().equals(StoreStatus.SHUTDOWN))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "폐업한 가게입니다.");
 
         List<Menu> menus = menuRepository.findAllByStoreId(id);
 
@@ -204,16 +212,28 @@ public class StoreService {
         );
     }
 
+    @Transactional(readOnly = true)
     public StorePageResponseDto findAll(int page, int pageSize, String name, StoreCategory category) {
-        int pageNum = (page > 0) ? page - 1 : 0;
-        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.ASC, "minimumPrice"));
-        Page<Store> storePage = storeRepository.findAllByNameAndCategory(name, category, pageable);
-        int currentPage = storePage.getNumber() + 1;
-        int totalPages = storePage.getTotalPages();
-        long totalElements = storePage.getTotalElements();
 
-        List<StoreResponseDto> stores = storePage.stream().map(
-                store -> new StoreResponseDto(
+        List<Store> storeList = storeRepository.findAllByNameAndCategory(name, category);
+        List<Store> filteredStores = storeList.stream()
+                .filter(store -> !store.getStatus().equals(StoreStatus.SHUTDOWN))
+                .toList();  //페이징처리하기전에 폐업한 가게 필터링을 먼저해야함
+
+        int pageNum = (page > 0) ? page - 1 : 0;    //사람한테는 1이 시작이지만 jpa가 제공하는 page는 시작 번호는 0번부터임
+        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.ASC, "minimumPrice"));
+
+        int totalElements = filteredStores.size();  //전부 몇개인지
+        int start = (int) pageable.getOffset(); //시작 번호
+        int end = Math.min((start + pageable.getPageSize()), totalElements);    //끝 번호
+        List<Store> pageContent = filteredStores.subList(start, end);   //filteredStores 리스트에서 start 인덱스부터 end 인덱스까지의 부분 리스트를 반환. subList()는 end 인덱스 요소는 포함 안하는게 java의 관행임
+
+        Page<Store> storePage = new PageImpl<>(pageContent, pageable, totalElements);   //여기서 필터링된 가게들을 페이징 처리함
+        int currentPage = storePage.getNumber() + 1;    //현재 페이지번호
+        int totalPages = storePage.getTotalPages();     //총 페이지 번호
+
+        List<StoreResponseDto> stores = storePage.stream()
+                .map(store -> new StoreResponseDto(
                         store.getId(),
                         store.getTelephoneNumber(),
                         store.getAddress(),
@@ -224,9 +244,16 @@ public class StoreService {
                         store.getMinimumPrice(),
                         store.getCategory(),
                         store.getStatus()
-                )
-        ).toList();
+                )).toList();    //storePage 객체를 stream.map 으로 List<StoreResponseDto> 객체로 변환
 
         return new StorePageResponseDto(stores, currentPage, totalPages, totalElements);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Store store = storeRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않거나 잘못 입력했습니다.")
+        );
+        store.setStatus(StoreStatus.SHUTDOWN);
     }
 }

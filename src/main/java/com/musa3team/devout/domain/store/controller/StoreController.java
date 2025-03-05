@@ -70,4 +70,10 @@ public class StoreController {
         StorePageResponseDto stores = storeService.findAll(page, pageSize, name, category);
         return new ResponseEntity<>(stores, HttpStatus.OK);
     }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        storeService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
