@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
+import java.util.Optional;
 
 
 @Service
@@ -87,6 +88,10 @@ public class OrderService {
         MDC.put("storeId", order.getStoreId());
         MDC.put("orderId", order.getId());
         MDC.put("status" , order.getStatus());
+    }
+
+    public Optional<Orders> findByIdAndStatus(Long orderId, OrderStatus status) {
+        return orderRepository.findByIdAndStatus(orderId, status);
     }
 
     private int getTotalCount(int count){
