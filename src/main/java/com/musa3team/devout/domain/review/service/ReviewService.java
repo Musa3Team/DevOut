@@ -3,7 +3,6 @@ package com.musa3team.devout.domain.review.service;
 import com.musa3team.devout.domain.member.entity.Member;
 import com.musa3team.devout.domain.member.repository.MemberRepository;
 import com.musa3team.devout.domain.order.enums.OrderStatus;
-import com.musa3team.devout.domain.order.repository.OrderItemRepository;
 import com.musa3team.devout.domain.order.repository.OrderRepository;
 import com.musa3team.devout.domain.review.dto.request.CreateReviewRequestDto;
 import com.musa3team.devout.domain.review.dto.request.UpdateReviewRequestDto;
@@ -11,6 +10,7 @@ import com.musa3team.devout.domain.review.dto.response.ReviewResponseDto;
 import com.musa3team.devout.domain.review.entity.Review;
 import com.musa3team.devout.domain.order.entity.Orders;
 import com.musa3team.devout.domain.review.repository.ReviewRepository;
+import com.musa3team.devout.domain.store.entity.Store;
 import com.musa3team.devout.domain.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +26,8 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
+    private final StoreRepository storeRepository;
+
 
     @Transactional
     public ReviewResponseDto save(Long memberId, Long orderId, CreateReviewRequestDto requestDto) {
@@ -40,11 +42,15 @@ public class ReviewService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
 
+        Store store = storeRepository.findById(order.getStoreId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
+
         Review review = new Review();
         review.setOrder(order);
         review.setMember(member);
         review.setContents(requestDto.getContents());
         review.setRating(requestDto.getRating());
+        review.setStore(store);
 
         reviewRepository.save(review);
 
@@ -53,18 +59,17 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public List<ReviewResponseDto> getReviewsByStore(Long storeId, Integer minRating, Integer maxRating) {
-
         if (minRating == null) {
             minRating = 1;
         }
         if (maxRating == null) {
             maxRating = 5;
         }
-//        List<Review> reviews = reviewRepository.findByStoreIdAndRatingGreaterThanAndRatingLessOrderByCreatedAtDesc(storeId, minRating, maxRating);
-//        return reviews.stream()
-//                .map(ReviewResponseDto::new)
-//                .collect(Collectors.toList());
-        return null;
+
+        List<Review> reviews = reviewRepository.findByStoreIdAndRatingBetweenOrderByCreatedAtDesc(storeId, minRating, maxRating);
+        return reviews.stream()
+                .map(ReviewResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional

@@ -10,11 +10,13 @@ import com.musa3team.devout.domain.review.dto.response.ReviewResponseDto;
 import com.musa3team.devout.domain.review.service.ReviewService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class ReviewController {
@@ -44,9 +46,14 @@ public class ReviewController {
     @GetMapping("/stores/{storeId}/reviews")
     public ResponseEntity<List<ReviewResponseDto>> getReviewsByStore(
             @PathVariable Long storeId,
+            HttpServletRequest request,
             @RequestParam(required = false) Integer minRating,
             @RequestParam(required = false) Integer maxRating
     ) {
+        log.info("API 호출성공");
+        String token = jwtUtil.extractToken(request);
+        Long memberId = jwtUtil.extractMemberId(token);
+
         List<ReviewResponseDto> reviews = reviewService.getReviewsByStore(storeId, minRating, maxRating);
         return ResponseEntity.ok(reviews);
     }

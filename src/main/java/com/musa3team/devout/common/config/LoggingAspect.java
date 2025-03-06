@@ -23,9 +23,14 @@ public class LoggingAspect {
         String url = request.getRequestURI();
         Object result = joinPoint.proceed();
 
-        String storeId = MDC.get("storeId").toString();
-        String orderId = MDC.get("orderId").toString();
-        String status = MDC.get("status").toString();
+        Object storeIdObj = MDC.get("storeId");
+        String storeId = storeIdObj != null ? storeIdObj.toString() : "N/A";
+
+        Object orderIdObj = MDC.get("orderId");
+        String orderId = orderIdObj != null ? orderIdObj.toString() : "N/A";
+
+        Object statusObj = MDC.get("status");
+        String status = statusObj != null ? statusObj.toString() : "N/A";
 
         log.info("AOP - ORDER API Response: storeId={}, orderId={}, status={}, currentTime={}, URL={}",
                 storeId, orderId, status, startTime, url);

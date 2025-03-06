@@ -25,18 +25,12 @@ public class Orders extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.PENDING;
-    @NotBlank
 
     @ManyToOne
     @JoinColumn(name = "buy_member_id")
     private Member member;
 
     public Orders(Long storeId, Member member) {
-        this.storeId = storeId;
-        this.member = member;
-    }
-
-    public void saveOrder(Long storeId, Member member){
         this.storeId = storeId;
         this.member = member;
     }

@@ -5,12 +5,10 @@ import lombok.Getter;
 @Getter
 public class CreateReviewRequestDto {
 
-    private final Long orderId;
     private final String contents;
     private final Integer rating;
 
-    public CreateReviewRequestDto(Long orderId, String contents, Integer rating) {
-        this.orderId = orderId;
+    public CreateReviewRequestDto(String contents, Integer rating) {
         this.contents = contents;
         this.rating = rating;
     }

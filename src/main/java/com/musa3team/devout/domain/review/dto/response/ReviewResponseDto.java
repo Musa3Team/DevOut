@@ -7,7 +7,6 @@ import lombok.Getter;
 public class ReviewResponseDto {
 
     private final Long id;
-    private final Long storeId;
     private final Long orderId;
     private final Long memberId;
     private final String contents;
@@ -15,7 +14,6 @@ public class ReviewResponseDto {
 
     public ReviewResponseDto(Review review) {
         this.id = review.getId();
-        this.storeId = review.getStore().getId();
         this.orderId = review.getOrder().getId();
         this.memberId = review.getMember().getId();
         this.contents = review.getContents();
