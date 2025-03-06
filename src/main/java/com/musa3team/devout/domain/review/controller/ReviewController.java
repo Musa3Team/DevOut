@@ -1,5 +1,6 @@
 package com.musa3team.devout.domain.review.controller;
 
+import com.musa3team.devout.common.jwt.JwtUtil;
 import com.musa3team.devout.domain.order.entity.Orders;
 import com.musa3team.devout.domain.order.enums.OrderStatus;
 import com.musa3team.devout.domain.order.service.OrderService;
@@ -7,6 +8,7 @@ import com.musa3team.devout.domain.review.dto.request.CreateReviewRequestDto;
 import com.musa3team.devout.domain.review.dto.request.UpdateReviewRequestDto;
 import com.musa3team.devout.domain.review.dto.response.ReviewResponseDto;
 import com.musa3team.devout.domain.review.service.ReviewService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,14 +21,17 @@ public class ReviewController {
 
     private final ReviewService reviewService;
     private final OrderService orderService;
+    private final JwtUtil jwtUtil;
 
     // 리뷰 생성
     @PostMapping("/orders/{orderId}/reviews")
     public ResponseEntity<ReviewResponseDto> save(
-            @SessionAttribute(name = "LOGIN_USER") Long memberId,
             @PathVariable Long orderId,
-            @RequestBody CreateReviewRequestDto requestDto
+            @RequestBody CreateReviewRequestDto requestDto, HttpServletRequest request
     ) {
+        String token = jwtUtil.extractToken(request);
+        Long memberId = jwtUtil.extractMemberId(token);
+
         Orders order = orderService.findByIdAndStatus(orderId, OrderStatus.DELIVERED)
                 .orElseThrow(() -> new IllegalArgumentException("배달 완료된 주문만 리뷰를 작성할 수 있습니다."));
 
@@ -49,9 +54,11 @@ public class ReviewController {
     // 리뷰 수정
     @PutMapping("/orders/{orderId}/reviews/{id}")
     public ResponseEntity<ReviewResponseDto> updateReview(
-            @SessionAttribute(name = "LOGIN_USER") Long memberId,
             @PathVariable Long id,
-            @RequestBody UpdateReviewRequestDto updateDto) {
+            @RequestBody UpdateReviewRequestDto updateDto, HttpServletRequest request
+    ) {
+        String token = jwtUtil.extractToken(request);
+        Long memberId = jwtUtil.extractMemberId(token);
 
         ReviewResponseDto updatedReview = reviewService.updateReview(memberId, id, updateDto);
         return ResponseEntity.ok(updatedReview);
@@ -60,9 +67,11 @@ public class ReviewController {
     // 리뷰 삭제
     @DeleteMapping("/orders/{orderId}/reviews/{id}")
     public ResponseEntity<Void> deleteReview(
-            @SessionAttribute(name = "LOGIN_USER") Long memberId,
-            @PathVariable Long id
+            @PathVariable Long id, HttpServletRequest request
     ) {
+        String token = jwtUtil.extractToken(request);
+        Long memberId = jwtUtil.extractMemberId(token);
+
         reviewService.deleteReview(memberId, id);
         return ResponseEntity.noContent().build();
     }
