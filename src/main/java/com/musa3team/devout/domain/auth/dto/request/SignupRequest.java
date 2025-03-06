@@ -4,9 +4,11 @@ import com.musa3team.devout.domain.member.entity.MemberRole;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class SignupRequest {
 
     private String name;
