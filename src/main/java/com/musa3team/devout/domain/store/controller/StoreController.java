@@ -5,6 +5,7 @@ import com.musa3team.devout.common.jwt.JwtUtil;
 import com.musa3team.devout.domain.member.entity.MemberRole;
 import com.musa3team.devout.domain.store.dto.*;
 import com.musa3team.devout.domain.store.service.StoreService;
+import jakarta.servlet.http.HttpServletRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -25,8 +26,8 @@ public class StoreController {
 
     @Operation(summary = "가게 생성", description = "사장 유저가 가게를 생성할 수 있습니다.")
     @PostMapping
-    public ResponseEntity<StoreResponseDto> save(@RequestBody @Valid StoreRequestDto requestDto, @RequestHeader("Authorization") String token) {
-        String substringToken = jwtUtil.substringToken(token);
+    public ResponseEntity<StoreResponseDto> save(@RequestBody @Valid StoreRequestDto requestDto, HttpServletRequest request) {
+        String substringToken = getSubstringToken(request);
         MemberRole memberRole = jwtUtil.extractMemberRole(substringToken);
 
         if(memberRole.equals(MemberRole.CUSTOMER))
@@ -50,8 +51,8 @@ public class StoreController {
 
     @Operation(summary = "가게 상태 수정", description = "사장 유저가 가게 상태를 수정할 수 있습니다.")
     @PatchMapping("/status/{id}")
-    public ResponseEntity<StoreResponseDto> SetStatusToPrepareOrUnprepared(@PathVariable Long id, @RequestHeader("Authorization") String token) {
-        String substringToken = jwtUtil.substringToken(token);
+    public ResponseEntity<StoreResponseDto> SetStatusToPrepareOrUnprepared(@PathVariable Long id, HttpServletRequest request) {
+        String substringToken = getSubstringToken(request);
         MemberRole memberRole = jwtUtil.extractMemberRole(substringToken);
 
         if(memberRole.equals(MemberRole.CUSTOMER))
@@ -66,9 +67,9 @@ public class StoreController {
     public ResponseEntity<StoreResponseDto> update(
             @PathVariable Long id,
             @RequestBody @Valid StoreUpdateRequestDto requestDto,
-            @RequestHeader("Authorization") String token
+            HttpServletRequest request
     ) {
-        String substringToken = jwtUtil.substringToken(token);
+        String substringToken = getSubstringToken(request);
         MemberRole memberRole = jwtUtil.extractMemberRole(substringToken);
 
         if(memberRole.equals(MemberRole.CUSTOMER))
@@ -111,10 +112,10 @@ public class StoreController {
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteById(
             @PathVariable Long id,
-            @RequestHeader("Authorization") String token,
+            HttpServletRequest request,
             @RequestBody DeleteRequestDto requestDto
     ) {
-        String substringToken = jwtUtil.substringToken(token);
+        String substringToken = getSubstringToken(request);
         MemberRole memberRole = jwtUtil.extractMemberRole(substringToken);
 
         if(memberRole.equals(MemberRole.CUSTOMER))
@@ -124,5 +125,10 @@ public class StoreController {
 
         storeService.delete(id, memberId, requestDto.getPassword());
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private String getSubstringToken(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        return jwtUtil.substringToken(token);
     }
 }
