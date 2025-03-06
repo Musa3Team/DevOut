@@ -18,7 +18,9 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
             "ORDER BY CASE WHEN :name IS NOT NULL AND s.name LIKE %:name% THEN 0 ELSE 1 END, s.name ASC")
     List<Store> findAllByNameAndCategory(@Param("name") String name, @Param("category") StoreCategory category);
 
-    Optional<Store> findByIdAndOpenTimeBeforeAndCloseTimeAfterAndStatus(Long storeId, LocalTime open, LocalTime close, StoreStatus storeStatus);
+    Optional<Store> findById(Long storeId);
 
-    Optional<Store> findByIdAndMemberId(Long id, Long ownerId);
+    Optional<Store> findByIdAndMemberId(Long Id, Long memberId);
+
+    Optional<Store> findByIdAndOpenTimeBeforeAndCloseTimeAfterAndStatus(Long storeId, LocalTime open, LocalTime close, StoreStatus storeStatus);
 }

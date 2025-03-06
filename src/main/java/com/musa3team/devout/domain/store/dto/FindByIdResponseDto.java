@@ -3,6 +3,7 @@ package com.musa3team.devout.domain.store.dto;
 import com.musa3team.devout.common.constants.StoreCategory;
 import com.musa3team.devout.common.constants.StoreStatus;
 import com.musa3team.devout.domain.menu.dto.MenuResponseDto;
+import com.musa3team.devout.domain.menu.dto.StoreMenuResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -23,5 +24,5 @@ public class FindByIdResponseDto {
     private Long minimum_price;
     private StoreCategory category;
     private StoreStatus status;
-    private List<MenuResponseDto> menus = new ArrayList<>();
+    private List<StoreMenuResponseDto> menus = new ArrayList<>();
 }
