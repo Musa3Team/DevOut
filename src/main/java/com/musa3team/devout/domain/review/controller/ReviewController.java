@@ -52,7 +52,7 @@ public class ReviewController {
     }
 
     // 리뷰 수정
-    @PutMapping("/orders/{orderId}/reviews/{id}")
+    @PutMapping("/reviews/{id}")
     public ResponseEntity<ReviewResponseDto> updateReview(
             @PathVariable Long id,
             @RequestBody UpdateReviewRequestDto updateDto, HttpServletRequest request
@@ -65,7 +65,7 @@ public class ReviewController {
     }
 
     // 리뷰 삭제
-    @DeleteMapping("/orders/{orderId}/reviews/{id}")
+    @DeleteMapping("/reviews/{id}")
     public ResponseEntity<Void> deleteReview(
             @PathVariable Long id, HttpServletRequest request
     ) {

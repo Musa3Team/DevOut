@@ -60,10 +60,11 @@ public class ReviewService {
         if (maxRating == null) {
             maxRating = 5;
         }
-        List<Review> reviews = reviewRepository.findByStoreIdAndRatingOrderByCreatedAtDesc(storeId, minRating, maxRating);
-        return reviews.stream()
-                .map(ReviewResponseDto::new)
-                .collect(Collectors.toList());
+//        List<Review> reviews = reviewRepository.findByStoreIdAndRatingGreaterThanAndRatingLessOrderByCreatedAtDesc(storeId, minRating, maxRating);
+//        return reviews.stream()
+//                .map(ReviewResponseDto::new)
+//                .collect(Collectors.toList());
+        return null;
     }
 
     @Transactional

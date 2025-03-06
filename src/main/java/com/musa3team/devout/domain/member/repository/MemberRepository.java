@@ -8,11 +8,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
-import java.util.Optional;
-
 public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByEmailAndMemberRole(String email, MemberRole memberRole);
-
+    Optional<Member> findByIdAndMemberRole(Long id, MemberRole memberRole);
     default Member findByIdOrElseThrow(Long id){
         return findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 아이디는 존재하지 않습니다."));
     }
