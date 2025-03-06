@@ -1,16 +1,16 @@
 package com.musa3team.devout.domain.store.repository;
 
+import com.musa3team.devout.common.constants.StoreCategory;
+import com.musa3team.devout.common.constants.StoreStatus;
 import com.musa3team.devout.domain.store.entity.Store;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-import com.musa3team.devout.common.constants.StoreCategory;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public interface StoreRepository extends JpaRepository<Store, Long> {
     //카테고리가 같은지 찾음
     //이름이 비어있지 않으며 이름이 like name 조건에 해당하면 우선순위 0 아니면 1로 이름 오름차순정렬
@@ -21,4 +21,6 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     Optional<Store> findById(Long storeId);
 
     Optional<Store> findByIdAndMemberId(Long Id, Long memberId);
+
+    Optional<Store> findByIdAndOpenTimeBeforeAndCloseTimeAfterAndStatus(Long storeId, LocalTime open, LocalTime close, StoreStatus storeStatus);
 }
