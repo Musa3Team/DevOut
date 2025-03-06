@@ -129,5 +129,9 @@ public class JwtUtil {
         return claims.getExpiration().before(new Date());
     }
 
-
+    //유저롤 찾는 메서드
+    public MemberRole extractMemberRole(String token){
+        Claims claims = extractClaims(token);
+        return MemberRole.valueOf(claims.get("memberRole", String.class));
+    }
 }
