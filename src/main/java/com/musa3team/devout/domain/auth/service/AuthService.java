@@ -59,7 +59,7 @@ public class AuthService {
         String accessToken = jwtUtil.createAccessToken(member.getId(), member.getEmail(), member.getMemberRole());
         createOrUpdateRefreshToken(member);
 
-        return new SignupResponse(member.getId(), member.getName(), member.getEmail(), member.getAddress(), member.getPhoneNumber(), member.getMemberRole(), accessToken);
+        return SignupResponse.toDto(member, accessToken);
     }
 
 

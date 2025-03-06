@@ -26,7 +26,8 @@ public class AuthController {
 
     @PostMapping("/signup")
     @Operation(summary = "회원가입", description = "회원가입 시 토큰이 발급됩니다.")
-    public ResponseEntity<SignupResponse> signup(@Valid @RequestBody SignupRequest signupRequest, HttpServletResponse response) {
+    public ResponseEntity<SignupResponse> signup(
+            @Valid @RequestBody SignupRequest signupRequest, HttpServletResponse response) {
 
         SignupResponse signupResponse = authService.signup(signupRequest);
 

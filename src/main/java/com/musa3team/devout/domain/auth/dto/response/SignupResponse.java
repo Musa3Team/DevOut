@@ -1,5 +1,6 @@
 package com.musa3team.devout.domain.auth.dto.response;
 
+import com.musa3team.devout.domain.member.entity.Member;
 import com.musa3team.devout.domain.member.entity.MemberRole;
 import lombok.Getter;
 
@@ -22,5 +23,17 @@ public class SignupResponse {
         this.phoneNumber = phoneNumber;
         this.memberRole = memberRole;
         this.token = token;
+    }
+
+    public static SignupResponse toDto(Member member, String token) {
+        return new SignupResponse(
+                member.getId(),
+                member.getName(),
+                member.getEmail(),
+                member.getAddress(),
+                member.getPhoneNumber(),
+                member.getMemberRole(),
+                token
+        );
     }
 }
