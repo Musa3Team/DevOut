@@ -39,7 +39,7 @@ public class StoreService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public StoreResponseDto save(Long memberId, String address, StoreCategory category, String name, String contents, Long minimumPrice, String telephoneNumber, LocalTime openTime, LocalTime closeTime) {
+    public StoreResponseDto save(Long memberId, String address, StoreCategory category, String name, String contents, int minimumPrice, String telephoneNumber, LocalTime openTime, LocalTime closeTime) {
         Member member = memberRepository.findByIdOrElseThrow(memberId);
 
         if (
@@ -155,7 +155,7 @@ public class StoreService {
     }
 
     @Transactional
-    public StoreResponseDto update(Long id, String address, StoreCategory category, String name, String contents, Long minimumPrice, String telephoneNumber, LocalTime openTime, LocalTime closeTime) {
+    public StoreResponseDto update(Long id, String address, StoreCategory category, String name, String contents, int minimumPrice, String telephoneNumber, LocalTime openTime, LocalTime closeTime) {
         Store store = storeRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "잘못 입력했거나 존재하지 않습니다.")
         );
@@ -167,7 +167,7 @@ public class StoreService {
         if (category != null) store.setCategory(category);
         if (name != null && !name.isBlank()) store.setName(name);
         if (contents != null && !contents.isBlank()) store.setContents(contents);
-        if (minimumPrice != null) store.setMinimumPrice(minimumPrice);
+        if (minimumPrice > 0) store.setMinimumPrice(minimumPrice);
         if (telephoneNumber != null && !telephoneNumber.isBlank()) {
             if (Pattern.matches("^(02|0[3-6][1-5])-?\\d{3,4}-?\\d{4}$", telephoneNumber))
                 store.setTelephoneNumber(telephoneNumber);

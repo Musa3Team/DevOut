@@ -20,6 +20,6 @@ public class StoreRequestDto {
     private LocalTime open_time;
     @ValidTenMinuteInterval
     private LocalTime close_time;
-    private Long minimum_price;
+    private int minimum_price;
     private StoreCategory category;
 }

@@ -15,6 +15,6 @@ public class StoreUpdateRequestDto {
     private String name;
     private LocalTime open_time;
     private LocalTime close_time;
-    private Long minimum_price;
+    private int minimum_price;
     private StoreCategory category;
 }

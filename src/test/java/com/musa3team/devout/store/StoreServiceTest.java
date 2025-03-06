@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -22,6 +23,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mockStatic;
 
 @ExtendWith(MockitoExtension.class)
 public class StoreServiceTest {
@@ -43,8 +45,8 @@ public class StoreServiceTest {
         //given
         Long id = 1L;
         StoreStatus status = StoreStatus.UNPREPARED;
-        LocalTime openTime = LocalTime.now();
-        LocalTime closeTime = LocalTime.now();
+        LocalTime openTime = LocalTime.of(13,0);
+        LocalTime closeTime = LocalTime.of(21,0);
 
         Store store = new Store();
         ReflectionTestUtils.setField(store, "id", id);
@@ -53,13 +55,20 @@ public class StoreServiceTest {
         ReflectionTestUtils.setField(store, "status", status);
 
         given(storeRepository.findById(anyLong())).willReturn(Optional.of(store));
-        //when
-        StoreResponseDto prepare = storeService.prepare(id);
 
-        //then
-        assertThat(prepare).isNotNull();
-        assertThat(prepare.getId()).isEqualTo(id);
-        assertThat(prepare.getStatus()).isEqualTo(StoreStatus.OPEN);
+        // 테스트용 고정 시간 설정 (예: 10:00)
+        LocalTime fixedTime = LocalTime.of(10, 0);
+        try (MockedStatic<LocalTime> localTimeMock = mockStatic(LocalTime.class)) {
+            localTimeMock.when(LocalTime::now).thenReturn(fixedTime);
+
+            // when
+            StoreResponseDto prepare = storeService.prepare(id);
+
+            // then
+            assertThat(prepare).isNotNull();
+            assertThat(prepare.getId()).isEqualTo(id);
+            assertThat(prepare.getStatus()).isEqualTo(StoreStatus.CLOSE);
+        }
     }
 
     @Test
@@ -79,7 +88,7 @@ public class StoreServiceTest {
         given(storeRepository.findById(anyLong())).willReturn(Optional.of(store));
 
         //when
-        StoreResponseDto update = storeService.update(id, "주소", StoreCategory.CHICKEN, "치킨", "이쿠", 20000L, "032-000-0000", openTime, closeTime);
+        StoreResponseDto update = storeService.update(id, "주소", StoreCategory.CHICKEN, "치킨", "이쿠", 20000, "032-000-0000", openTime, closeTime);
 
         //then
         assertThat(update.getId()).isEqualTo(id);
@@ -87,7 +96,7 @@ public class StoreServiceTest {
         assertThat(update.getCategory()).isEqualTo(StoreCategory.CHICKEN);
         assertThat(update.getName()).isEqualTo("치킨");
         assertThat(update.getContents()).isEqualTo("이쿠");
-        assertThat(update.getMinimum_price()).isEqualTo(20000L);
+        assertThat(update.getMinimum_price()).isEqualTo(20000);
         assertThat(update.getTelephone_number()).isEqualTo("032-000-0000");
         assertThat(update.getOpen_time()).isEqualTo(openTime);
         assertThat(update.getClose_time()).isEqualTo(closeTime);

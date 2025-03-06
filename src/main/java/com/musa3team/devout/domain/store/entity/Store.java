@@ -38,7 +38,7 @@ public class Store extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private StoreStatus status;
 
-    private Long minimumPrice;
+    private int minimumPrice;
 
     @Enumerated(EnumType.STRING)
     private StoreCategory category;
@@ -50,7 +50,7 @@ public class Store extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public Store(String telephoneNumber, String address, String contents, String name, LocalTime openTime, LocalTime closeTime, Long minimumPrice, StoreCategory category, Member member) {
+    public Store(String telephoneNumber, String address, String contents, String name, LocalTime openTime, LocalTime closeTime, int minimumPrice, StoreCategory category, Member member) {
         this.telephoneNumber = telephoneNumber;
         this.address = address;
         this.contents = contents;
