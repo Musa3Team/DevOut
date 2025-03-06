@@ -10,7 +10,6 @@ class DevOutApplicationTests {
 
     @Test
     void contextLoads() {
-        assertThat(true).isTrue();
     }
 
 }
