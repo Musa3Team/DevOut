@@ -61,10 +61,4 @@ public class Store extends BaseEntity {
         this.category = category;
         this.member = member;
     }
-
-    public Store(StoreStatus status, LocalTime openTime, LocalTime closeTime) {
-        this.status = status;
-        this.openTime = openTime;
-        this.closeTime = closeTime;
-    }
 }

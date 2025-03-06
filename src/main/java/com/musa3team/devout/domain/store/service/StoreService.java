@@ -166,7 +166,7 @@ public class StoreService {
         if (telephoneNumber != null && !address.isBlank()) store.setAddress(address);
         if (category != null) store.setCategory(category);
         if (name != null && !name.isBlank()) store.setName(name);
-        if (contents != null && contents.isBlank()) store.setContents(contents);
+        if (contents != null && !contents.isBlank()) store.setContents(contents);
         if (minimumPrice != null) store.setMinimumPrice(minimumPrice);
         if (telephoneNumber != null && !telephoneNumber.isBlank()) {
             if (Pattern.matches("^(02|0[3-6][1-5])-?\\d{3,4}-?\\d{4}$", telephoneNumber))
@@ -276,8 +276,8 @@ public class StoreService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 폐업한 가게입니다");
 
         Member member = memberRepository.findByIdOrElseThrow(memberId);
-        if(!passwordEncoder.matches(password, member.getPassword()))
 
+        if(!passwordEncoder.matches(password, member.getPassword()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 틀렸어요");
         
         store.setStatus(StoreStatus.SHUTDOWN);
