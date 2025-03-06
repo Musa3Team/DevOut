@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Entity
@@ -49,5 +51,8 @@ public class Review extends BaseEntity {
     public void updateReview(String newContents, Integer newRating) {
         this.contents = newContents;
         this.rating = newRating;
+    }
+
+    public void setCreatedAt(LocalDateTime localDateTime) {
     }
 }

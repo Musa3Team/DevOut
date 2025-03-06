@@ -54,4 +54,7 @@ public class Orders extends BaseEntity {
 
         return false;
     }
+
+    public void setId(long l) {
+    }
 }

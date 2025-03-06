@@ -19,4 +19,5 @@ public class ReviewResponseDto {
         this.contents = review.getContents();
         this.rating = review.getRating();
     }
+
 }

@@ -50,7 +50,6 @@ public class ReviewController {
             @RequestParam(required = false) Integer minRating,
             @RequestParam(required = false) Integer maxRating
     ) {
-        log.info("API 호출성공");
         String token = jwtUtil.extractToken(request);
         Long memberId = jwtUtil.extractMemberId(token);
 
