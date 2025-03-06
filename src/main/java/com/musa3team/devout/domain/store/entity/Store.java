@@ -18,6 +18,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Setter
+@Table(name = "store")
 public class Store extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

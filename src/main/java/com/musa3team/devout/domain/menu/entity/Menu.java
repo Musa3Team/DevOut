@@ -3,11 +3,15 @@ package com.musa3team.devout.domain.menu.entity;
 import com.musa3team.devout.common.entity.BaseEntity;
 import com.musa3team.devout.domain.store.entity.Store;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
 @Table(name = "menu")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Menu extends BaseEntity{
 
     @Id

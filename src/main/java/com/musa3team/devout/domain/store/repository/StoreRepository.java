@@ -1,12 +1,15 @@
 package com.musa3team.devout.domain.store.repository;
 
 import com.musa3team.devout.common.constants.StoreCategory;
+import com.musa3team.devout.common.constants.StoreStatus;
 import com.musa3team.devout.domain.store.entity.Store;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface StoreRepository extends JpaRepository<Store, Long> {
     //카테고리가 같은지 찾음
@@ -14,4 +17,8 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     @Query("SELECT s FROM Store s WHERE s.category = :category " +
             "ORDER BY CASE WHEN :name IS NOT NULL AND s.name LIKE %:name% THEN 0 ELSE 1 END, s.name ASC")
     List<Store> findAllByNameAndCategory(@Param("name") String name, @Param("category") StoreCategory category);
+
+    Optional<Store> findByIdAndOpenTimeBeforeAndCloseTimeAfterAndStatus(Long storeId, LocalTime open, LocalTime close, StoreStatus storeStatus);
+
+    Optional<Store> findByIdAndMemberId(Long id, Long ownerId);
 }
