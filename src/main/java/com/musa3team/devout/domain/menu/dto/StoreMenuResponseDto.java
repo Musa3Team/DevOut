@@ -5,21 +5,17 @@ import com.musa3team.devout.domain.menu.entity.MenuStatus;
 import lombok.Getter;
 
 @Getter
-public class MenuResponseDto {
+public class StoreMenuResponseDto {
 
     private final Long id;
     private final String name;
-    private final int price;
     private final String contents;
-    private final MenuStatus status;
-    private final MenuCategory category;
+    private final int price;
 
-    public MenuResponseDto(Long id, String name, int price, String contents, MenuStatus status, MenuCategory category) {
+    public StoreMenuResponseDto(Long id, String name, String contents, int price) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.contents = contents;
-        this.status = status;
-        this.category = category;
     }
 }
