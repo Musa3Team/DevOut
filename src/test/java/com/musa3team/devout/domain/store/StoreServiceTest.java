@@ -1,4 +1,4 @@
-package com.musa3team.devout.store;
+package com.musa3team.devout.domain.store;
 
 import com.musa3team.devout.common.config.PasswordEncoder;
 import com.musa3team.devout.common.constants.StoreCategory;
