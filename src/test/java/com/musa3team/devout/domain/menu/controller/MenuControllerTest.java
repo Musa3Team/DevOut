@@ -14,15 +14,15 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(MenuController.class)
 class MenuControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockitoBean
-    private MenuService menuService;
-
-    @Test
-    void Menu_생성() throws Exception {
+//
+//    @Autowired
+//    private MockMvc mockMvc;
+//
+//    @MockitoBean
+//    private MenuService menuService;
+//
+//    @Test
+//    void Menu_생성() throws Exception {
         //given
 //        long storeId = 1L;
 //        CreateMenuRequestDto requestDto = new CreateMenuRequestDto();
@@ -38,5 +38,5 @@ class MenuControllerTest {
 
         // then
 
-    }
+//    }
 }
