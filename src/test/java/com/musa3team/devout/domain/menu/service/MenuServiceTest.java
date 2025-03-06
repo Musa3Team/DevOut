@@ -13,10 +13,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 
-import static java.awt.SystemColor.menu;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -103,7 +103,7 @@ class MenuServiceTest {
         Long storeId = 1L;
         Long menuId = 1L;
         Store store = new Store();
-        store.setId(storeId);
+        ReflectionTestUtils.setField(store, "id", storeId);
 
         Menu savedMenu = new Menu(store, "탕수육", 12000, "맛있어", MenuCategory.MAIN_DISHES);
 
