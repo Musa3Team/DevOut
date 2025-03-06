@@ -13,7 +13,6 @@ import org.hibernate.annotations.DynamicUpdate;
 @Getter
 @Entity
 @NoArgsConstructor
-@DynamicUpdate
 @Table(name = "menu")
 public class Menu extends BaseEntity{
 

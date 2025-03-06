@@ -51,7 +51,7 @@ public class MenuController {
         return new ResponseEntity<>(menuService.save(dto, storeId), HttpStatus.CREATED);
     }
 
-    @PatchMapping("/stores/{storeId}/menus/{menuId}")
+    @PutMapping("/stores/{storeId}/menus/{menuId}")
     public ResponseEntity<?> update(@PathVariable Long storeId, @PathVariable Long menuId, @RequestBody UpdateMenuRequestDto dto, HttpServletRequest request) {
 
         ResponseEntity<?> validationResult = validateOwner(request, storeId);
