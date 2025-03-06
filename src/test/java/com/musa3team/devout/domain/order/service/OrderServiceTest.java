@@ -76,7 +76,7 @@ class OrderServiceTest {
         long storeId = 1L;
         Store store = new Store("321-1234-1234", "주소", "가게내용", "가게명",
                 LocalTime.of(8,0,0), LocalTime.of(20,0,0)
-                , 20000L, StoreCategory.CHICKEN, member);
+                , 20000, StoreCategory.CHICKEN, member);
         ReflectionTestUtils.setField(store, "status", StoreStatus.OPEN);
 
         long menuId = 1L;
@@ -132,7 +132,7 @@ class OrderServiceTest {
         long storeId = 1L;
         Store store = new Store("321-1234-1234", "주소", "가게내용", "가게명",
                 LocalTime.of(8,0,0), LocalTime.of(20,0,0)
-                , 20000L, StoreCategory.CHICKEN, member);
+                , 20000, StoreCategory.CHICKEN, member);
         ReflectionTestUtils.setField(store, "status", StoreStatus.OPEN);
 
         long menuId = 1L;
@@ -168,7 +168,7 @@ class OrderServiceTest {
         long storeId = 1L;
         Store store = new Store("321-1234-1234", "주소", "가게내용", "가게명",
                 LocalTime.of(8,0,0), LocalTime.of(20,0,0)
-                , 20000L, StoreCategory.CHICKEN, member);
+                , 20000, StoreCategory.CHICKEN, member);
         ReflectionTestUtils.setField(store, "status", StoreStatus.OPEN);
 
         long menuId = 1L;
@@ -202,7 +202,7 @@ class OrderServiceTest {
         long storeId = 1L;
         Store store = new Store("321-1234-1234", "주소", "가게내용", "가게명",
                 LocalTime.of(8,0,0), LocalTime.of(20,0,0)
-                , 20000L, StoreCategory.CHICKEN, member);
+                , 20000, StoreCategory.CHICKEN, member);
         ReflectionTestUtils.setField(store, "status", StoreStatus.OPEN);
 
         int count = 2;
@@ -444,7 +444,7 @@ class OrderServiceTest {
         long storeId = 1L;
         Store store = new Store("321-1234-1234", "주소", "가게내용", "가게명",
                 LocalTime.of(8,0,0), LocalTime.of(20,0,0)
-                , 20000L, StoreCategory.CHICKEN, owner);
+                , 20000, StoreCategory.CHICKEN, owner);
 
         ReflectionTestUtils.setField(store, "id", storeId);
         ReflectionTestUtils.setField(store, "status", StoreStatus.OPEN);
@@ -470,7 +470,7 @@ class OrderServiceTest {
         long storeId = 1L;
         Store store = new Store("321-1234-1234", "주소", "가게내용", "가게명",
                 LocalTime.of(8,0,0), LocalTime.of(20,0,0)
-                , 20000L, StoreCategory.CHICKEN, owner);
+                , 20000, StoreCategory.CHICKEN, owner);
         ReflectionTestUtils.setField(store, "id", storeId);
         ReflectionTestUtils.setField(store, "status", StoreStatus.OPEN);
 
