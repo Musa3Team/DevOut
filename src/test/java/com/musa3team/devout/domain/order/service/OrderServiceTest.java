@@ -6,6 +6,8 @@ import com.musa3team.devout.domain.member.entity.Member;
 import com.musa3team.devout.domain.member.entity.MemberRole;
 import com.musa3team.devout.domain.member.repository.MemberRepository;
 import com.musa3team.devout.domain.menu.entity.Menu;
+import com.musa3team.devout.domain.menu.entity.MenuCategory;
+import com.musa3team.devout.domain.menu.entity.MenuStatus;
 import com.musa3team.devout.domain.menu.repository.MenuRepository;
 import com.musa3team.devout.domain.order.dto.request.CreateOrderItemRequest;
 import com.musa3team.devout.domain.order.dto.request.CreateOrderRequest;
@@ -80,7 +82,7 @@ class OrderServiceTest {
         long menuId = 1L;
         int count = 2;
         int price = 10000;
-        Menu menu = new Menu(1L, store, "메뉴명", 10000, "메뉴내용", "OPEN", "DESERT");
+        Menu menu = new Menu(store, "메뉴명", 10000, "메뉴내용", MenuCategory.DRINKS);
         ReflectionTestUtils.setField(menu, "id", 1L);
 
         Orders order = new Orders(storeId, member);
@@ -134,7 +136,7 @@ class OrderServiceTest {
         ReflectionTestUtils.setField(store, "status", StoreStatus.OPEN);
 
         long menuId = 1L;
-        Menu menu = new Menu(1L, store, "메뉴명", 10000, "메뉴내용", "OPEN", "DESERT");
+        Menu menu = new Menu(store, "메뉴명", 10000, "메뉴내용", MenuCategory.DRINKS);
         ReflectionTestUtils.setField(menu, "id", menuId);
 
         int count = 1;
@@ -170,7 +172,7 @@ class OrderServiceTest {
         ReflectionTestUtils.setField(store, "status", StoreStatus.OPEN);
 
         long menuId = 1L;
-        Menu menu = new Menu(1L, store, "메뉴명", 10000, "메뉴내용", "OPEN", "DESERT");
+        Menu menu = new Menu(store, "메뉴명", 10000, "메뉴내용", MenuCategory.DRINKS);
         ReflectionTestUtils.setField(menu, "id", 1L);
 
         int count = 2;
