@@ -29,7 +29,7 @@ public class StoreUpdateRequestDto {
     private LocalTime close_time;
 
     @Schema(description = "최소주문금액", example = "10000")
-    private Long minimum_price;
+    private int minimum_price;
 
     @Schema(description = "카테고리", example = "CHICKEN")
     private StoreCategory category;
