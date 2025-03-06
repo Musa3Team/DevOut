@@ -1,4 +1,4 @@
-package com.musa3team.devout.config;
+package com.musa3team.devout.common.config;
 
 import com.musa3team.devout.common.config.PasswordEncoder;
 import org.junit.jupiter.api.Test;
