@@ -29,7 +29,6 @@ public class Orders extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "buy_member_id")
-    @NotBlank
     private Member member;
 
     public Orders(Long storeId, Member member) {
