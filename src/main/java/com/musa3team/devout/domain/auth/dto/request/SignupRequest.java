@@ -3,9 +3,13 @@ package com.musa3team.devout.domain.auth.dto.request;
 import com.musa3team.devout.domain.member.entity.MemberRole;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SignupRequest {
 
     private String name;
@@ -24,7 +28,7 @@ public class SignupRequest {
     @NotBlank(message = "전화번호는 필수 입력 값입니다.")
     private String phoneNumber;
 
+    @NotBlank(message = "회원역할은 필수 입력 값입니다.")
     private MemberRole memberRole;
-
 
 }
