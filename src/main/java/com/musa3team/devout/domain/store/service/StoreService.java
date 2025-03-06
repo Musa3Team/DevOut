@@ -6,6 +6,7 @@ import com.musa3team.devout.common.constants.StoreStatus;
 import com.musa3team.devout.domain.member.entity.Member;
 import com.musa3team.devout.domain.member.repository.MemberRepository;
 import com.musa3team.devout.domain.menu.dto.MenuResponseDto;
+import com.musa3team.devout.domain.menu.dto.StoreMenuResponseDto;
 import com.musa3team.devout.domain.menu.entity.Menu;
 import com.musa3team.devout.domain.menu.repository.MenuRepository;
 import com.musa3team.devout.domain.store.dto.FindByIdResponseDto;
@@ -219,7 +220,7 @@ public class StoreService {
                 store.getCategory(),
                 store.getStatus(),
                 menus.stream().map(
-                        menu -> new MenuResponseDto(
+                        menu -> new StoreMenuResponseDto(
                                 menu.getId(),
                                 menu.getName(),
                                 menu.getContents(),
