@@ -27,17 +27,17 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public MemberResponse modifyInfo(Long id, ModifyInfoRequest updateInfoRequest) {
+    public MemberResponse modifyInfo(Long id, ModifyInfoRequest modifyInfoRequest) {
         Member member = memberRepository.findByIdOrElseThrow(id);
 
-        if(updateInfoRequest.getName() != null) {
-            member.modifyName(updateInfoRequest.getName());
+        if(modifyInfoRequest.getName() != null) {
+            member.modifyName(modifyInfoRequest.getName());
         }
-        if(updateInfoRequest.getAddress() != null) {
-            member.modifyAddress(updateInfoRequest.getAddress());
+        if(modifyInfoRequest.getAddress() != null) {
+            member.modifyAddress(modifyInfoRequest.getAddress());
         }
-        if(updateInfoRequest.getPhoneNumber() != null) {
-            member.modifyPhoneNumber(updateInfoRequest.getPhoneNumber());
+        if(modifyInfoRequest.getPhoneNumber() != null) {
+            member.modifyPhoneNumber(modifyInfoRequest.getPhoneNumber());
         }
 
         return new MemberResponse(member.getId(), member.getName(), member.getEmail(), member.getAddress(), member.getPhoneNumber());
