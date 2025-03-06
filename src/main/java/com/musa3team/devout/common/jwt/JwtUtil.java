@@ -134,4 +134,6 @@ public class JwtUtil {
         Claims claims = extractClaims(token);
         return MemberRole.valueOf(claims.get("memberRole", String.class));
     }
+
+
 }
