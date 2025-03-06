@@ -14,29 +14,4 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(MenuController.class)
 class MenuControllerTest {
-//
-//    @Autowired
-//    private MockMvc mockMvc;
-//
-//    @MockitoBean
-//    private MenuService menuService;
-//
-//    @Test
-//    void Menu_생성() throws Exception {
-    //given
-//        long storeId = 1L;
-//        CreateMenuRequestDto requestDto = new CreateMenuRequestDto();
-//        requestDto.setName("탕수육");
-//        requestDto.setPrice(12000);
-//        requestDto.setContents("맛있는 탕수육");
-//        requestDto.setCategory(MenuCategory.MAIN_DISHES);
-//
-//        MenuResponseDto responseDto = new MenuResponseDto(1L, "탕수육", 12000, "맛있는 탕수육", MenuStatus.ACTIVE, MenuCategory.MAIN_DISHES);
-
-    // when
-
-
-    // then
-
-//    }
 }
