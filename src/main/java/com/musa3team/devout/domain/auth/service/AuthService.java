@@ -13,7 +13,9 @@ import com.musa3team.devout.domain.member.repository.TokenRepository;
 import com.sun.jdi.request.InvalidRequestStateException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -30,7 +32,15 @@ public class AuthService {
     @Transactional
     public SignupResponse signup(SignupRequest signupRequest) {
 
-        if(memberRepository.existsByEmailAndMemberRole(signupRequest.getEmail(), signupRequest.getMemberRole())){
+        Optional<Member> existingMember = memberRepository.findByEmailAndMemberRole(signupRequest.getEmail(), signupRequest.getMemberRole());
+
+        if(existingMember.isPresent()) {
+            Member member = existingMember.get();
+
+            if(member.getDeletedAt() != null){
+                throw new InvalidRequestStateException("탈퇴한 이메일은 재사용이 불가능합니다.");
+            }
+
             throw new InvalidRequestStateException("해당 이메일로 가입된 사용자가 이미 존재합니다.");
         }
 
@@ -49,7 +59,7 @@ public class AuthService {
         String accessToken = jwtUtil.createAccessToken(member.getId(), member.getEmail(), member.getMemberRole());
         createOrUpdateRefreshToken(member);
 
-        return new SignupResponse(member.getId(), member.getName(), member.getEmail(), member.getAddress(), member.getPhoneNumber(), member.getMemberRole(), accessToken);
+        return SignupResponse.toDto(member, accessToken);
     }
 
 
@@ -59,6 +69,10 @@ public class AuthService {
         Member member = memberRepository.findByEmailAndMemberRole(loginRequest.getEmail(), loginRequest.getMemberRole()).orElseThrow(
                 () -> new IllegalArgumentException("해당 이메일로 가입된 사용자가 없습니다.")
         );
+
+        if(member.getDeletedAt() != null){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "탈퇴된 회원입니다.");
+        }
 
         if(!passwordEncoder.matches(loginRequest.getPassword(), member.getPassword())){
             throw new InvalidRequestStateException("비밀번호가 틀렸습니다.");
@@ -80,9 +94,18 @@ public class AuthService {
             return existingToken.get().getRefreshToken();
         }
 
-        // 리프레시 토큰이 없거나 만료된 경우 새로운 리프레시 토큰 생성
         String newRefreshToken = jwtUtil.createRefreshToken(member.getId(), member.getEmail(), member.getMemberRole());
-        tokenRepository.save(new RefreshToken(newRefreshToken, member.getEmail()));
+
+        if (existingToken.isPresent()) {
+            // 기존 토큰이 있으면 updateToken 메서드로 새로운 refreshToken 저장
+            RefreshToken refreshTokenEntity = existingToken.get();
+            refreshTokenEntity.updateToken(newRefreshToken);
+            tokenRepository.save(refreshTokenEntity);
+        } else {
+            // 기존 토큰이 없으면 새로 생성하여 저장
+            RefreshToken newTokenEntity = new RefreshToken(newRefreshToken, member.getEmail());
+            tokenRepository.save(newTokenEntity);
+        }
         return newRefreshToken;
     }
 }

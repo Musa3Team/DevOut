@@ -7,9 +7,13 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import lombok.RequiredArgsConstructor;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Collections;
 
 @SecurityScheme(
         type = SecuritySchemeType.APIKEY,
@@ -18,6 +22,7 @@ import org.springframework.context.annotation.Configuration;
         in = SecuritySchemeIn.HEADER)
 
 @Configuration
+@RequiredArgsConstructor
 public class SwaggerConfig {
 
     @Bean
@@ -32,7 +37,8 @@ public class SwaggerConfig {
                                         .description("Token을 입력해주세요.")
                         )
                 )
-                .info(apiInfo());
+                .info(apiInfo())
+                .security(Collections.singletonList(new SecurityRequirement().addList("Authorization")));
     }
 
     @Bean

@@ -1,11 +1,14 @@
 package com.musa3team.devout.domain.member.entity;
 
 import com.musa3team.devout.common.entity.BaseEntity;
+import com.musa3team.devout.domain.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -40,6 +43,9 @@ public class Member extends BaseEntity {
     @Column(nullable = true)
     private LocalDateTime deletedAt;
 
+    @OneToMany(mappedBy = "member")
+    private List<Store> stores = new ArrayList<>();
+
     public Member(String name, String email, String password, String address, String phoneNumber, String memberRole) {
         this.name = name;
         this.email = email;
@@ -60,6 +66,14 @@ public class Member extends BaseEntity {
 
     public void modifyPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public void modifyPassword(String password) {
+        this.password = password;
+    }
+
+    public void deleteMember(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
     }
 
 }

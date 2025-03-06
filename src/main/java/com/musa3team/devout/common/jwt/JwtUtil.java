@@ -8,6 +8,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -80,6 +81,16 @@ public class JwtUtil {
         throw new IllegalArgumentException("Not Found Token");
     }
 
+    public String extractToken(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
+
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Authorization 헤더가 없거나 잘못된 형식입니다.");
+        }
+
+        return authorizationHeader.substring(7);  // "Bearer " 이후 부분만 반환
+    }
+
     // 토큰으로 유저 정보 가져오기
     public Claims extractClaims(String token) {
         return Jwts.parserBuilder()
@@ -118,7 +129,7 @@ public class JwtUtil {
         return claims.getExpiration().before(new Date());
     }
 
-
+    //유저롤 찾는 메서드
     public MemberRole extractMemberRole(String token){
         Claims claims = extractClaims(token);
         return MemberRole.valueOf(claims.get("memberRole", String.class));

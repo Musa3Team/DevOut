@@ -50,6 +50,6 @@ public class MenuService {
 
     public boolean isStoreOwner(Long memberId, Long storeId) {
 
-        return storeRepository.findByIdAndOwnerId(storeId, memberId).isPresent();
+        return storeRepository.findByIdAndMemberId(storeId, memberId).isPresent();
     }
 }

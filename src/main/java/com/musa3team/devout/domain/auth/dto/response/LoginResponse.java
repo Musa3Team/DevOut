@@ -4,10 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 public class LoginResponse {
 
     private final String token;
     private final String username;
 
+    public LoginResponse(String token, String username) {
+        this.token = token;
+        this.username = username;
+    }
 }
