@@ -1,8 +1,8 @@
 package com.musa3team.devout.domain.order.controller;
 
+import com.musa3team.devout.domain.order.dto.request.ChangeStatusRequest;
 import com.musa3team.devout.common.config.OrderLogging;
 import com.musa3team.devout.common.jwt.JwtUtil;
-import com.musa3team.devout.domain.order.dto.request.ChangeStatusRequest;
 import com.musa3team.devout.domain.order.dto.request.CreateOrderRequest;
 import com.musa3team.devout.domain.order.dto.response.OrderResponse;
 import com.musa3team.devout.domain.order.service.OrderService;
@@ -84,7 +84,5 @@ public class OrderController {
         Long tokenMemberId = jwtUtil.extractMemberId(jwtUtil.substringToken(token.getHeader("Authorization")));
         return ResponseEntity.ok(orderService.storeFindByAll(tokenMemberId, storeId, page, size));
     }
-
-
 
 }

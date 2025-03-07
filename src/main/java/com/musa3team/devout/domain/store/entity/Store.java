@@ -100,4 +100,7 @@ public class Store extends BaseEntity {
             else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "분은 10분 단위만 입력 가능합니다.");
         }
     }
+
+    public void setId(long l) {
+    }
 }

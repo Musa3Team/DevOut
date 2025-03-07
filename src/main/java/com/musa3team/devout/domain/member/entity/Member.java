@@ -76,4 +76,6 @@ public class Member extends BaseEntity {
         this.deletedAt = deletedAt;
     }
 
+    public void setId(Long memberId) {
+    }
 }

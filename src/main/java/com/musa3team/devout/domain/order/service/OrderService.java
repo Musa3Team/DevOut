@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -68,7 +70,10 @@ public class OrderService {
                 request.getOrderItem().getPrice(),
                 order));
 
-        setMDC(order);
+        MDC.put("storeId", order.getStoreId());
+        MDC.put("orderId", order.getId());
+        MDC.put("status" , order.getStatus());
+
         return OrderResponse.toDto(order, orderItem, totalPrice);
     }
 
@@ -89,6 +94,11 @@ public class OrderService {
         order.updateStatus(status);
     }
 
+    public Optional<Orders> findByIdAndStatus(Long orderId, OrderStatus status) {
+        return orderRepository.findByIdAndStatus(orderId, status);
+    }
+
+
     // 고객 단건 주문
     @Transactional(readOnly = true)
     public OrderResponse customerFindById(Long customerId, Long id){
@@ -96,6 +106,7 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 주문 정보입니다."));
         OrderItem orderItem = orderItemRepository.findByOrderId(id)
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 주문 정보입니다."));
+
         int totalPrice = getTotalPrice(orderItem.getCount(), orderItem.getPrice());
 
         return OrderResponse.toDto(order, orderItem, totalPrice);
