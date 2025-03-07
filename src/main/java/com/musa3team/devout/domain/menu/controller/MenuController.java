@@ -5,6 +5,8 @@ import com.musa3team.devout.domain.member.entity.MemberRole;
 import com.musa3team.devout.domain.menu.dto.CreateMenuRequestDto;
 import com.musa3team.devout.domain.menu.dto.UpdateMenuRequestDto;
 import com.musa3team.devout.domain.menu.service.MenuService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Menu 관리 API", description = "메뉴 생성, 수정, 삭제 기능 API입니다.")
 public class MenuController {
 
     private final MenuService menuService;
@@ -40,7 +43,7 @@ public class MenuController {
 
         return null;
     }
-
+    @Operation(summary = "메뉴 생성", description = "메뉴를 생성할 수 있습니다.")
     @PostMapping("/stores/{storeId}/menus")
     public ResponseEntity<?> save(@PathVariable Long storeId, @Valid @RequestBody CreateMenuRequestDto dto, HttpServletRequest request) {
 
@@ -51,6 +54,7 @@ public class MenuController {
         return new ResponseEntity<>(menuService.save(dto, storeId), HttpStatus.CREATED);
     }
 
+    @Operation(summary = "메뉴 수정", description = "해당 메뉴의 가격, 이름, 설명 등을 수정할 수 있습니다.")
     @PutMapping("/stores/{storeId}/menus/{menuId}")
     public ResponseEntity<?> update(@PathVariable Long storeId, @PathVariable Long menuId, @RequestBody UpdateMenuRequestDto dto, HttpServletRequest request) {
 
@@ -60,6 +64,7 @@ public class MenuController {
         return new  ResponseEntity<>(menuService.update(storeId, menuId, dto), HttpStatus.OK);
     }
 
+    @Operation(summary = "메뉴 삭제", description = "해당 메뉴를 삭제할 수 있습니다.")
     @DeleteMapping("/stores/{storeId}/menus/{menuId}")
     public ResponseEntity<?> delete(@PathVariable Long storeId, @PathVariable Long menuId, HttpServletRequest request) {
 

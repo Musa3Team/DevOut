@@ -1,4 +1,4 @@
-package com.musa3team.devout.store;
+package com.musa3team.devout.domain.store;
 
 import com.musa3team.devout.common.constants.StoreCategory;
 import com.musa3team.devout.domain.store.entity.Store;
@@ -6,6 +6,7 @@ import com.musa3team.devout.domain.store.repository.StoreRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
@@ -24,13 +25,13 @@ public class StoreRepositoryTest {
         StoreCategory category = StoreCategory.CHICKEN;
 
         Store store = new Store();
-        store.setName(name);
-        store.setCategory(category);
+        ReflectionTestUtils.setField(store, "name", name);
+        ReflectionTestUtils.setField(store, "category", category);
 
         String name2 = "치킨2";
         Store store2 = new Store();
-        store2.setName(name2);
-        store2.setCategory(category);
+        ReflectionTestUtils.setField(store2, "name", name2);
+        ReflectionTestUtils.setField(store2, "category", category);
 
         storeRepository.save(store);
         storeRepository.save(store2);

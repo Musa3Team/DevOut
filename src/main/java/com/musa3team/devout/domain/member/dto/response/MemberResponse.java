@@ -8,15 +8,15 @@ public class MemberResponse {
     private final Long id;
     private final String name;
     private final String email;
-    private final String phoneNumber;
     private final String address;
+    private final String phoneNumber;
 
-
-    public MemberResponse(Long id, String name, String email, String phoneNumber, String address) {
+    public MemberResponse(Long id, String name, String email, String address, String phoneNumber) {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.phoneNumber = phoneNumber;
         this.address = address;
+        this.phoneNumber = phoneNumber;
+
     }
 }

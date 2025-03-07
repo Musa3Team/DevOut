@@ -64,7 +64,7 @@ public class StoreService {
                 member
         );
 
-        store.setStatus(StoreStatus.UNPREPARED);
+        store.uddateStatus(StoreStatus.UNPREPARED);
         Store savedStore = storeRepository.save(store);
 
         return new StoreResponseDto(
@@ -103,9 +103,9 @@ public class StoreService {
         if(store.getStatus().equals(StoreStatus.SHUTDOWN))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "폐업한 가게입니다.");
 
-        if (store.getStatus().equals(StoreStatus.UNPREPARED)) store.setStatus(StoreStatus.CLOSE);
+        if (store.getStatus().equals(StoreStatus.UNPREPARED)) store.uddateStatus(StoreStatus.CLOSE);
         else {
-            store.setStatus(StoreStatus.UNPREPARED);
+            store.uddateStatus(StoreStatus.UNPREPARED);
             return new StoreResponseDto(
                     store.getId(),
                     store.getTelephoneNumber(),
@@ -140,16 +140,16 @@ public class StoreService {
         if (store.getOpenTime().isBefore(store.getCloseTime())) { //openTime이 closeTime보다 이전에 있는 경우, 즉, opentime과 closetime이 같은 날에 있는 경우
             //opentime과 closetime이 같은 날인 경우
             if (now.isAfter(store.getOpenTime()) && now.isBefore(store.getCloseTime())) {
-                store.setStatus(StoreStatus.OPEN);
+                store.uddateStatus(StoreStatus.OPEN);
             } else {
-                store.setStatus(StoreStatus.CLOSE);
+                store.uddateStatus(StoreStatus.CLOSE);
             }
         } else {
             //opentime이 오늘이고, closetime이 밤 12시 이상이 되어 다음날이 된 경우
             if (now.isAfter(store.getOpenTime()) || now.isBefore(store.getCloseTime())) {
-                store.setStatus(StoreStatus.OPEN);
+                store.uddateStatus(StoreStatus.OPEN);
             } else {
-                store.setStatus(StoreStatus.CLOSE);
+                store.uddateStatus(StoreStatus.CLOSE);
             }
         }
     }
@@ -160,27 +160,7 @@ public class StoreService {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "잘못 입력했거나 존재하지 않습니다.")
         );
 
-        if(store.getStatus().equals(StoreStatus.SHUTDOWN))
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "폐업한 가게입니다.");
-
-        if (telephoneNumber != null && !address.isBlank()) store.setAddress(address);
-        if (category != null) store.setCategory(category);
-        if (name != null && !name.isBlank()) store.setName(name);
-        if (contents != null && !contents.isBlank()) store.setContents(contents);
-        if (minimumPrice > 0) store.setMinimumPrice(minimumPrice);
-        if (telephoneNumber != null && !telephoneNumber.isBlank()) {
-            if (Pattern.matches("^(02|0[3-6][1-5])-?\\d{3,4}-?\\d{4}$", telephoneNumber))
-                store.setTelephoneNumber(telephoneNumber);
-            else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "전화번호 형식을 확인하세요");
-        }
-        if (openTime != null) {
-            if (isValidTenMinuteInterval(openTime)) store.setOpenTime(openTime);
-            else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "분은 10분 단위만 입력 가능합니다.");
-        }
-        if (closeTime != null) {
-            if (isValidTenMinuteInterval(closeTime)) store.setCloseTime(closeTime);
-            else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "분은 10분 단위만 입력 가능합니다.");
-        }
+        store.updateStore(store.getStatus(), address, telephoneNumber, category, name, contents, minimumPrice, openTime, closeTime);
 
         return new StoreResponseDto(
                 store.getId(),
@@ -280,6 +260,6 @@ public class StoreService {
         if(!passwordEncoder.matches(password, member.getPassword()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 틀렸어요");
         
-        store.setStatus(StoreStatus.SHUTDOWN);
+        store.uddateStatus(StoreStatus.SHUTDOWN);
     }
 }
