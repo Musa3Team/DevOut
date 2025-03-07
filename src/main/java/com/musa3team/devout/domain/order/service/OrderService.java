@@ -78,37 +78,6 @@ public class OrderService {
     }
 
     @Transactional
-    public void changeOrderStatus(Long id, OrderStatus status){
-        Orders order = orderRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 주문 정보입니다."));
-
-        // todo : 테스트값 추후에 변경 필요
-        memberRepository.findByIdAndMemberRole(1L, "OWNER")
-                .orElseThrow(() -> new IllegalArgumentException("사장인 유저만 주문 상태변경이 가능합니다"));
-
-        if(order.getStatus().getSequence()+1 != status.getSequence() || (order.getStatus().getSequence() == 1 && status != OrderStatus.CANCELED)){
-            throw new IllegalArgumentException(String.format("'%s' 상태에서 '%s' 상태로 변경할 수 없습니다.",
-                    order.getStatus().getMessage(), status.getMessage()));
-        }
-
-        order.updateStatus(status);
-
-        // aop값
-        MDC.put("storeId", order.getStoreId());
-        MDC.put("orderId", order.getId());
-        MDC.put("status" , order.getStatus());
-    }
-
-    public Optional<Orders> findByIdAndStatus(Long orderId, OrderStatus status) {
-        return orderRepository.findByIdAndStatus(orderId, status);
-    }
-
-
-    private int getTotalPrice(int count, int price){
-        return count * price;
-    }
-
-    @Transactional
     public void changeOrderStatus(Long memberId, Long id, OrderStatus status){
         Orders order = orderRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 주문 정보입니다."));
@@ -125,6 +94,11 @@ public class OrderService {
         order.updateStatus(status);
     }
 
+    public Optional<Orders> findByIdAndStatus(Long orderId, OrderStatus status) {
+        return orderRepository.findByIdAndStatus(orderId, status);
+    }
+
+
     // 고객 단건 주문
     @Transactional(readOnly = true)
     public OrderResponse customerFindById(Long customerId, Long id){
@@ -132,6 +106,7 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 주문 정보입니다."));
         OrderItem orderItem = orderItemRepository.findByOrderId(id)
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 주문 정보입니다."));
+
         int totalPrice = getTotalPrice(orderItem.getCount(), orderItem.getPrice());
 
         return OrderResponse.toDto(order, orderItem, totalPrice);
@@ -200,6 +175,9 @@ public class OrderService {
         return new PageImpl<>(orderResponses, pageable, orderPage.getTotalElements());
     }
 
+    private int getTotalPrice(int count, int price){
+        return count * price;
+    }
 
     private void setMDC(Orders order){
         // aop값

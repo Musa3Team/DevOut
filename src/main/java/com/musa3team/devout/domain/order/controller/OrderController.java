@@ -85,11 +85,4 @@ public class OrderController {
         return ResponseEntity.ok(orderService.storeFindByAll(tokenMemberId, storeId, page, size));
     }
 
-    @PatchMapping("/{id}")
-    public void changeStatus(@PathVariable Long id, @Valid @RequestBody ChangeStatusRequest requset){
-        orderService.changeOrderStatus(id, requset.getOrderStatus());
-    }
-
-
-
 }
